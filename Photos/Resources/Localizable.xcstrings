@@ -1,0 +1,56 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "By %@" : {
+
+    },
+    "Common.Retry.label" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Retry"
+          }
+        }
+      }
+    },
+    "Could not load photo details" : {
+
+    },
+    "Error Loading Photos" : {
+
+    },
+    "Failed to Load" : {
+
+    },
+    "Hello, world!" : {
+
+    },
+    "ID: %@" : {
+
+    },
+    "Loading photo details..." : {
+
+    },
+    "No Photos Yet" : {
+
+    },
+    "Photo Details" : {
+
+    },
+    "Photos" : {
+
+    },
+    "Pull to refresh to load photos" : {
+
+    },
+    "Retry" : {
+
+    },
+    "Unable to load photos. Please try again." : {
+
+    }
+  },
+  "version" : "1.0"
+}
