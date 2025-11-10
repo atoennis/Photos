@@ -18,10 +18,19 @@
     "Could not load photo details" : {
 
     },
+    "Error Loading Favorites" : {
+
+    },
     "Error Loading Photos" : {
 
     },
     "Failed to Load" : {
+
+    },
+    "Favorite photos will appear here" : {
+
+    },
+    "Favorites" : {
 
     },
     "Hello, world!" : {
@@ -31,6 +40,9 @@
 
     },
     "Loading photo details..." : {
+
+    },
+    "No Favorites Yet" : {
 
     },
     "No Photos Yet" : {
@@ -46,6 +58,9 @@
 
     },
     "Retry" : {
+
+    },
+    "Unable to load favorites. Please try again." : {
 
     },
     "Unable to load photos. Please try again." : {

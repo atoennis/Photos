@@ -1,15 +1,17 @@
 import Foundation
+import SwiftData
 
 // Compose all use case protocols
-typealias AllUseCases = HasPhotoUseCase
+typealias AllUseCases = HasPhotoUseCase & HasFavoriteUseCase
 
 struct DIContainer: AllUseCases {
     var photoUseCase: PhotoUseCase
+    var favoriteUseCase: FavoriteUseCase
 }
 
 extension DIContainer {
     // Production configuration
-    static func real() -> DIContainer {
+    static func real(modelContainer: ModelContainer) -> DIContainer {
         // Build dependency graph from bottom up
         let networkSession = URLSession.shared
         let photoRepository = DefaultPhotoRepository(
@@ -18,17 +20,23 @@ extension DIContainer {
         )
         let photoUseCase = DefaultPhotoUseCase(repository: photoRepository)
 
+        let favoriteRepository = DefaultFavoriteRepository(modelContainer: modelContainer)
+        let favoriteUseCase = DefaultFavoriteUseCase(repository: favoriteRepository)
+
         return DIContainer(
-            photoUseCase: photoUseCase
+            photoUseCase: photoUseCase,
+            favoriteUseCase: favoriteUseCase
         )
     }
 
     // Mock configuration for tests/previews
     static func mock(
-        mockPhotoUseCase: PhotoUseCase? = nil
+        mockPhotoUseCase: PhotoUseCase? = nil,
+        mockFavoriteUseCase: FavoriteUseCase? = nil
     ) -> DIContainer {
         DIContainer(
-            photoUseCase: mockPhotoUseCase ?? MockPhotoUseCase()
+            photoUseCase: mockPhotoUseCase ?? MockPhotoUseCase(),
+            favoriteUseCase: mockFavoriteUseCase ?? MockFavoriteUseCase()
         )
     }
 }
