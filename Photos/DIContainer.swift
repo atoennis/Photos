@@ -1,10 +1,20 @@
 import Foundation
+import SwiftData
 
 // Compose all use case protocols
 typealias AllUseCases = HasPhotoUseCase
+    & HasFavoriteUseCase
 
-struct DIContainer: AllUseCases {
-    var photoUseCase: PhotoUseCase
+struct DIContainer: AllUseCases, ViewModelFactory {
+    let photoUseCase: PhotoUseCase
+    let favoriteUseCase: FavoriteUseCase
+
+    // MARK: - ViewModelFactory
+
+    @MainActor
+    func makePhotoDetailViewModel(photoId: String) -> PhotoDetailViewModel {
+        PhotoDetailViewModel(photoId: photoId, useCases: self)
+    }
 }
 
 extension DIContainer {
@@ -17,18 +27,33 @@ extension DIContainer {
             environment: .production
         )
         let photoUseCase = DefaultPhotoUseCase(repository: photoRepository)
+        let favoriteRepository = DefaultFavoriteRepository(modelContainer: buildModelContainer())
+        let favoriteUseCase = DefaultFavoriteUseCase(repository: favoriteRepository)
 
         return DIContainer(
-            photoUseCase: photoUseCase
+            photoUseCase: photoUseCase,
+            favoriteUseCase: favoriteUseCase
         )
     }
 
     // Mock configuration for tests/previews
     static func mock(
-        mockPhotoUseCase: PhotoUseCase? = nil
+        photoUseCase: PhotoUseCase = MockPhotoUseCase(),
+        favoriteUseCase: FavoriteUseCase = MockFavoriteUseCase()
     ) -> DIContainer {
         DIContainer(
-            photoUseCase: mockPhotoUseCase ?? MockPhotoUseCase()
+            photoUseCase: photoUseCase,
+            favoriteUseCase: favoriteUseCase
         )
+    }
+}
+
+extension DIContainer {
+    static func buildModelContainer() -> ModelContainer {
+        do {
+            return try ModelContainer(for: FavoritePhotoEntity.self)
+        } catch {
+            fatalError("Unable to create ModelContainer") // TODO: Handle this more gracefully
+        }
     }
 }

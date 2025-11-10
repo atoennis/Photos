@@ -1,11 +1,11 @@
 // Domain/UseCases/PhotoUseCase.swift
 import Foundation
 
-protocol HasPhotoUseCase {
+protocol HasPhotoUseCase: Sendable {
     var photoUseCase: PhotoUseCase { get }
 }
 
-protocol PhotoUseCase {
+protocol PhotoUseCase: Sendable {
     func fetchPhotoDetail(id: String) async throws -> Photo
     func fetchPhotos() async throws -> [Photo]
 }

@@ -3,6 +3,7 @@ import SwiftUI
 
 struct PhotoListView: View {
     @State var viewModel: PhotoListViewModel
+    @Environment(\.viewModelFactory) private var factory
 
     var body: some View {
         NavigationStack {
@@ -51,10 +52,7 @@ struct PhotoListView: View {
             .listStyle(.plain)
             .navigationDestination(for: String.self) { photoId in
                 PhotoDetailView(
-                    viewModel: PhotoDetailViewModel(
-                        photoId: photoId,
-                        useCases: viewModel.useCases
-                    )
+                    viewModel: factory.makePhotoDetailViewModel(photoId: photoId)
                 )
             }
         }
@@ -118,7 +116,7 @@ struct PhotoRowView: View {
     PhotoListView(
         viewModel: .init(
             useCases: DIContainer.mock(
-                mockPhotoUseCase: MockPhotoUseCase(
+                photoUseCase: MockPhotoUseCase(
                     photos: .fixtures
                 )
             ),
@@ -131,7 +129,7 @@ struct PhotoRowView: View {
     PhotoListView(
         viewModel: .init(
             useCases: DIContainer.mock(
-                mockPhotoUseCase: MockPhotoUseCase(
+                photoUseCase: MockPhotoUseCase(
                     delay: 10,
                     photos: .fixtures
                 )
@@ -145,7 +143,7 @@ struct PhotoRowView: View {
     PhotoListView(
         viewModel: .init(
             useCases: DIContainer.mock(
-                mockPhotoUseCase: MockPhotoUseCase(
+                photoUseCase: MockPhotoUseCase(
                     throwError: true
                 )
             ),
@@ -158,7 +156,7 @@ struct PhotoRowView: View {
     PhotoListView(
         viewModel: .init(
             useCases: DIContainer.mock(
-                mockPhotoUseCase: MockPhotoUseCase(
+                photoUseCase: MockPhotoUseCase(
                     photos: []
                 )
             ),

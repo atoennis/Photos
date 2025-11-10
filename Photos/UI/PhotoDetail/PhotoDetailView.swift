@@ -83,6 +83,16 @@ struct PhotoDetailView: View {
         }
         .navigationTitle("Photo Details")
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .primaryAction) {
+                Button {
+                    Task { await viewModel.send(.toggleFavorite) }
+                } label: {
+                    Image(systemName: viewModel.state.isFavorite ? "heart.fill" : "heart")
+                        .foregroundStyle(viewModel.state.isFavorite ? .red : .primary)
+                }
+            }
+        }
     }
 }
 
@@ -138,7 +148,8 @@ private struct DetailRow: View {
     }
 }
 
-private struct PreviewContainer: HasPhotoUseCase {
+private struct PreviewContainer: HasPhotoUseCase, HasFavoriteUseCase {
     var photoUseCase: PhotoUseCase = MockPhotoUseCase()
+    var favoriteUseCase: FavoriteUseCase = MockFavoriteUseCase()
 }
 #endif

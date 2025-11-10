@@ -9,13 +9,32 @@ import SwiftUI
 
 @main
 struct PhotosApp: App {
-    private let container = DIContainer.real()
+    // Dependency injection container
+    private let container: DIContainer
+
+    init() {
+        // Initialize DI container with model container
+        container = DIContainer.real()
+    }
 
     var body: some Scene {
         WindowGroup {
-            PhotoListView(
-                viewModel: .init(useCases: container, state: .init())
-            )
+            TabView {
+                PhotoListView(
+                    viewModel: .init(useCases: container, state: .init())
+                )
+                .tabItem {
+                    Label("Photos", systemImage: "photo.fill")
+                }
+
+                FavoritesListView(
+                    viewModel: .init(useCases: container, state: .init())
+                )
+                .tabItem {
+                    Label("Favorites", systemImage: "heart.fill")
+                }
+            }
+            .environment(\.viewModelFactory, container)
         }
     }
 }
