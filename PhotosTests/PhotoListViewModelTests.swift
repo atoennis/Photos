@@ -126,8 +126,6 @@ struct PhotoListViewModelTests {
     }
 
     @Test func isEmpty() {
-        let mockUseCase = MockPhotoUseCase()
-
         // Empty state
         var state = PhotoListViewModel.State(isLoading: false, photos: [])
         #expect(state.isEmpty == true)
