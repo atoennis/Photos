@@ -21,7 +21,7 @@ struct PhotoRepositoryTests {
     }
 
     @Test func fetchPhotosNetworkError() async {
-        let mockSession = MockNetworkSession(throwError: true)
+        let mockSession = MockNetworkSession(responseData: Data(), statusCode: 200, throwError: true)
         let repository = DefaultPhotoRepository(
             session: mockSession,
             environment: .production
@@ -34,8 +34,8 @@ struct PhotoRepositoryTests {
 
     @Test func fetchPhotosInvalidStatusCode() async throws {
         let mockSession = try MockNetworkSession(
-            statusCode: 404,
-            response: [PhotoJSON].fixtures
+            response: [PhotoJSON].fixtures,
+            statusCode: 404
         )
         let repository = DefaultPhotoRepository(
             session: mockSession,
@@ -49,8 +49,8 @@ struct PhotoRepositoryTests {
 
     @Test func fetchPhotosValidatesHTTPResponse() async throws {
         let mockSession = try MockNetworkSession(
-            statusCode: 500,
-            response: [PhotoJSON].fixtures
+            response: [PhotoJSON].fixtures,
+            statusCode: 500
         )
         let repository = DefaultPhotoRepository(
             session: mockSession,
