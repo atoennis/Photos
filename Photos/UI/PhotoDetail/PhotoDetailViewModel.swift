@@ -28,7 +28,7 @@ class PhotoDetailViewModel {
     var state: State
     let useCases: UseCases
 
-    init(photoId: String, useCases: UseCases, state: State = State()) {
+    init(photoId: String, state: State = State(), useCases: UseCases) {
         self.photoId = photoId
         self.useCases = useCases
         self.state = state

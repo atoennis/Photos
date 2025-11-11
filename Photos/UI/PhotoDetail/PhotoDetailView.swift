@@ -117,8 +117,8 @@ private struct DetailRow: View {
         PhotoDetailView(
             viewModel: PhotoDetailViewModel(
                 photoId: "0",
-                useCases: PreviewContainer(),
-                state: PhotoDetailViewModel.State(isLoading: true)
+                state: PhotoDetailViewModel.State(isLoading: true),
+                useCases: PreviewContainer()
             )
         )
     }
@@ -129,8 +129,8 @@ private struct DetailRow: View {
         PhotoDetailView(
             viewModel: PhotoDetailViewModel(
                 photoId: "0",
-                useCases: PreviewContainer(),
-                state: PhotoDetailViewModel.State(photo: .fixture())
+                state: PhotoDetailViewModel.State(photo: .fixture()),
+                useCases: PreviewContainer()
             )
         )
     }
@@ -141,8 +141,8 @@ private struct DetailRow: View {
         PhotoDetailView(
             viewModel: PhotoDetailViewModel(
                 photoId: "0",
-                useCases: PreviewContainer(),
-                state: PhotoDetailViewModel.State(errorLoading: true)
+                state: PhotoDetailViewModel.State(errorLoading: true),
+                useCases: PreviewContainer()
             )
         )
     }

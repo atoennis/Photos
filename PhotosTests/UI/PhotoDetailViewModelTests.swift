@@ -13,8 +13,8 @@ struct PhotoDetailViewModelTests {
         self.photoUseCase = MockPhotoUseCase()
         self.favoriteUseCase = MockFavoriteUseCase()
         self.useCases = DIContainer.mock(
-            photoUseCase: photoUseCase,
-            favoriteUseCase: favoriteUseCase
+            favoriteUseCase: favoriteUseCase,
+            photoUseCase: photoUseCase
         )
     }
 
@@ -23,6 +23,7 @@ struct PhotoDetailViewModelTests {
     @Test func initialState() {
         let viewModel = PhotoDetailViewModel(
             photoId: "0",
+            state: .init(),
             useCases: useCases
         )
 
@@ -35,6 +36,7 @@ struct PhotoDetailViewModelTests {
     @Test func initialStateWithPhotoId() {
         let viewModel = PhotoDetailViewModel(
             photoId: "42",
+            state: .init(),
             useCases: useCases
         )
 
@@ -50,6 +52,7 @@ struct PhotoDetailViewModelTests {
         )
         let viewModel = PhotoDetailViewModel(
             photoId: "0",
+            state: .init(),
             useCases: useCases
         )
 
@@ -67,6 +70,7 @@ struct PhotoDetailViewModelTests {
         let useCases = DIContainer.mock(photoUseCase: mockUseCase)
         let viewModel = PhotoDetailViewModel(
             photoId: "0",
+            state: .init(),
             useCases: useCases
         )
 
@@ -84,8 +88,8 @@ struct PhotoDetailViewModelTests {
         let useCases = DIContainer.mock(photoUseCase: mockUseCase)
         let viewModel = PhotoDetailViewModel(
             photoId: "0",
-            useCases: useCases,
-            state: PhotoDetailViewModel.State(errorLoading: true)
+            state: PhotoDetailViewModel.State(errorLoading: true),
+            useCases: useCases
         )
 
         await viewModel.send(.retry)
@@ -103,6 +107,7 @@ struct PhotoDetailViewModelTests {
         let useCases = DIContainer.mock(photoUseCase: mockUseCase)
         let viewModel = PhotoDetailViewModel(
             photoId: "42",
+            state: .init(),
             useCases: useCases
         )
 
@@ -118,6 +123,7 @@ struct PhotoDetailViewModelTests {
         let useCases = DIContainer.mock(photoUseCase: mockUseCase)
         let viewModel = PhotoDetailViewModel(
             photoId: "0",
+            state: .init(),
             useCases: useCases
         )
 
@@ -140,6 +146,7 @@ struct PhotoDetailViewModelTests {
         let useCases = DIContainer.mock(photoUseCase: mockUseCase)
         let viewModel = PhotoDetailViewModel(
             photoId: "0",
+            state: .init(),
             useCases: useCases
         )
 
@@ -152,6 +159,7 @@ struct PhotoDetailViewModelTests {
         let successfulUseCase = MockPhotoUseCase(photo: Photo.fixture(id: "0"), throwError: false)
         let successfulViewModel = PhotoDetailViewModel(
             photoId: "0",
+            state: .init(),
             useCases: DIContainer.mock(photoUseCase: successfulUseCase)
         )
 
@@ -166,8 +174,8 @@ struct PhotoDetailViewModelTests {
         let useCases = DIContainer.mock(photoUseCase: mockUseCase)
         let viewModel = PhotoDetailViewModel(
             photoId: "0",
-            useCases: useCases,
-            state: PhotoDetailViewModel.State(errorLoading: true)
+            state: PhotoDetailViewModel.State(errorLoading: true),
+            useCases: useCases
         )
 
         await viewModel.send(.onAppear)
@@ -194,6 +202,7 @@ struct PhotoDetailViewModelTests {
         let useCases = DIContainer.mock(photoUseCase: mockUseCase)
         let viewModel = PhotoDetailViewModel(
             photoId: "123",
+            state: .init(),
             useCases: useCases
         )
 
@@ -207,6 +216,7 @@ struct PhotoDetailViewModelTests {
         let useCases = DIContainer.mock(photoUseCase: mockUseCase)
         let viewModel = PhotoDetailViewModel(
             photoId: "456",
+            state: .init(),
             useCases: useCases
         )
 
@@ -230,6 +240,7 @@ struct PhotoDetailViewModelTests {
         let useCases = DIContainer.mock(photoUseCase: mockUseCase)
         let viewModel = PhotoDetailViewModel(
             photoId: "999",
+            state: .init(),
             useCases: useCases
         )
 

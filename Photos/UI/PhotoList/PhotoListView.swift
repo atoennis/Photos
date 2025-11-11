@@ -115,12 +115,12 @@ struct PhotoRowView: View {
 #Preview("Loaded") {
     PhotoListView(
         viewModel: .init(
+            state: .init(),
             useCases: DIContainer.mock(
                 photoUseCase: MockPhotoUseCase(
                     photos: .fixtures
                 )
-            ),
-            state: .init()
+            )
         )
     )
 }
@@ -128,13 +128,13 @@ struct PhotoRowView: View {
 #Preview("Loading") {
     PhotoListView(
         viewModel: .init(
+            state: .init(),
             useCases: DIContainer.mock(
                 photoUseCase: MockPhotoUseCase(
                     delay: 10,
                     photos: .fixtures
                 )
-            ),
-            state: .init()
+            )
         )
     )
 }
@@ -142,12 +142,12 @@ struct PhotoRowView: View {
 #Preview("Error") {
     PhotoListView(
         viewModel: .init(
+            state: .init(),
             useCases: DIContainer.mock(
                 photoUseCase: MockPhotoUseCase(
                     throwError: true
                 )
-            ),
-            state: .init()
+            )
         )
     )
 }
@@ -155,12 +155,12 @@ struct PhotoRowView: View {
 #Preview("Empty") {
     PhotoListView(
         viewModel: .init(
+            state: .init(),
             useCases: DIContainer.mock(
                 photoUseCase: MockPhotoUseCase(
                     photos: []
                 )
-            ),
-            state: .init()
+            )
         )
     )
 }

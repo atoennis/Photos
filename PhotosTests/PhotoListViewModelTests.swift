@@ -18,7 +18,7 @@ struct PhotoListViewModelTests {
         let mockUseCase = MockPhotoUseCase()
         let useCases = MockUseCases(photoUseCase: mockUseCase)
         let initialState = PhotoListViewModel.State()
-        let viewModel = PhotoListViewModel(useCases: useCases, state: initialState)
+        let viewModel = PhotoListViewModel(state: initialState, useCases: useCases)
 
         #expect(viewModel.state.photos.isEmpty)
         #expect(viewModel.state.isLoading == false)
@@ -32,8 +32,8 @@ struct PhotoListViewModelTests {
         let mockUseCase = MockPhotoUseCase(photos: .fixtures, throwError: false)
         let useCases = MockUseCases(photoUseCase: mockUseCase)
         let viewModel = PhotoListViewModel(
-            useCases: useCases,
-            state: PhotoListViewModel.State()
+            state: PhotoListViewModel.State(),
+            useCases: useCases
         )
 
         await viewModel.send(.onAppear)
@@ -48,8 +48,8 @@ struct PhotoListViewModelTests {
         let mockUseCase = MockPhotoUseCase(throwError: true)
         let useCases = MockUseCases(photoUseCase: mockUseCase)
         let viewModel = PhotoListViewModel(
-            useCases: useCases,
-            state: PhotoListViewModel.State()
+            state: PhotoListViewModel.State(),
+            useCases: useCases
         )
 
         await viewModel.send(.onAppear)
@@ -64,8 +64,8 @@ struct PhotoListViewModelTests {
         let mockUseCase = MockPhotoUseCase(photos: .fixtures, throwError: false)
         let useCases = MockUseCases(photoUseCase: mockUseCase)
         let viewModel = PhotoListViewModel(
-            useCases: useCases,
-            state: PhotoListViewModel.State(errorLoading: true)
+            state: PhotoListViewModel.State(errorLoading: true),
+            useCases: useCases
         )
 
         await viewModel.send(.retry)
@@ -80,8 +80,8 @@ struct PhotoListViewModelTests {
         let useCases = MockUseCases(photoUseCase: mockUseCase)
         let initialPhotos = [Photo.fixture(id: "old")]
         let viewModel = PhotoListViewModel(
-            useCases: useCases,
-            state: PhotoListViewModel.State(photos: initialPhotos)
+            state: PhotoListViewModel.State(photos: initialPhotos),
+            useCases: useCases
         )
 
         await viewModel.send(.refreshPulled)
@@ -95,8 +95,8 @@ struct PhotoListViewModelTests {
         let mockUseCase = MockPhotoUseCase(delay: 0.1, photos: .fixtures)
         let useCases = MockUseCases(photoUseCase: mockUseCase)
         let viewModel = PhotoListViewModel(
-            useCases: useCases,
-            state: PhotoListViewModel.State()
+            state: PhotoListViewModel.State(),
+            useCases: useCases
         )
 
         // Start refresh (which doesn't show loading)
@@ -116,8 +116,8 @@ struct PhotoListViewModelTests {
         let mockUseCase = MockPhotoUseCase(photos: .fixtures, throwError: false)
         let useCases = MockUseCases(photoUseCase: mockUseCase)
         let viewModel = PhotoListViewModel(
-            useCases: useCases,
-            state: PhotoListViewModel.State(errorLoading: true)
+            state: PhotoListViewModel.State(errorLoading: true),
+            useCases: useCases
         )
 
         await viewModel.send(.onAppear)
@@ -145,8 +145,8 @@ struct PhotoListViewModelTests {
         let mockUseCase = MockPhotoUseCase(photos: .fixtures, throwError: false)
         let useCases = MockUseCases(photoUseCase: mockUseCase)
         let viewModel = PhotoListViewModel(
-            useCases: useCases,
-            state: PhotoListViewModel.State()
+            state: PhotoListViewModel.State(),
+            useCases: useCases
         )
 
         // First load
@@ -166,8 +166,8 @@ struct PhotoListViewModelTests {
         let mockUseCase = MockPhotoUseCase(throwError: true)
         let useCases = MockUseCases(photoUseCase: mockUseCase)
         let viewModel = PhotoListViewModel(
-            useCases: useCases,
-            state: PhotoListViewModel.State()
+            state: PhotoListViewModel.State(),
+            useCases: useCases
         )
 
         // Fail first
@@ -177,8 +177,8 @@ struct PhotoListViewModelTests {
         // Create new ViewModel with successful mock to test recovery
         let successfulUseCase = MockPhotoUseCase(photos: .fixtures, throwError: false)
         let successfulViewModel = PhotoListViewModel(
-            useCases: MockUseCases(photoUseCase: successfulUseCase),
-            state: PhotoListViewModel.State()
+            state: PhotoListViewModel.State(),
+            useCases: MockUseCases(photoUseCase: successfulUseCase)
         )
 
         // Retry and succeed

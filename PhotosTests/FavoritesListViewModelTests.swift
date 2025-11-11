@@ -18,7 +18,7 @@ struct FavoritesListViewModelTests {
         let mockUseCase = MockFavoriteUseCase()
         let useCases = MockUseCases(favoriteUseCase: mockUseCase)
         let initialState = FavoritesListViewModel.State()
-        let viewModel = FavoritesListViewModel(useCases: useCases, state: initialState)
+        let viewModel = FavoritesListViewModel(state: initialState, useCases: useCases)
 
         #expect(viewModel.state.favorites.isEmpty)
         #expect(viewModel.state.isLoading == false)
@@ -32,8 +32,8 @@ struct FavoritesListViewModelTests {
         let mockUseCase = MockFavoriteUseCase(favorites: .fixtures, throwError: false)
         let useCases = MockUseCases(favoriteUseCase: mockUseCase)
         let viewModel = FavoritesListViewModel(
-            useCases: useCases,
-            state: FavoritesListViewModel.State()
+            state: FavoritesListViewModel.State(),
+            useCases: useCases
         )
 
         await viewModel.send(.onAppear)
@@ -48,8 +48,8 @@ struct FavoritesListViewModelTests {
         let mockUseCase = MockFavoriteUseCase(throwError: true)
         let useCases = MockUseCases(favoriteUseCase: mockUseCase)
         let viewModel = FavoritesListViewModel(
-            useCases: useCases,
-            state: FavoritesListViewModel.State()
+            state: FavoritesListViewModel.State(),
+            useCases: useCases
         )
 
         await viewModel.send(.onAppear)
@@ -65,8 +65,8 @@ struct FavoritesListViewModelTests {
         let useCases = MockUseCases(favoriteUseCase: mockUseCase)
         let initialFavorites = [Photo.fixture(id: "old")]
         let viewModel = FavoritesListViewModel(
-            useCases: useCases,
-            state: FavoritesListViewModel.State(favorites: initialFavorites)
+            state: FavoritesListViewModel.State(favorites: initialFavorites),
+            useCases: useCases
         )
 
         await viewModel.send(.refreshPulled)
@@ -80,8 +80,8 @@ struct FavoritesListViewModelTests {
         let mockUseCase = MockFavoriteUseCase(delay: 0.1, favorites: .fixtures)
         let useCases = MockUseCases(favoriteUseCase: mockUseCase)
         let viewModel = FavoritesListViewModel(
-            useCases: useCases,
-            state: FavoritesListViewModel.State()
+            state: FavoritesListViewModel.State(),
+            useCases: useCases
         )
 
         // Start refresh (which doesn't show loading)
@@ -101,8 +101,8 @@ struct FavoritesListViewModelTests {
         let mockUseCase = MockFavoriteUseCase(favorites: .fixtures, throwError: false)
         let useCases = MockUseCases(favoriteUseCase: mockUseCase)
         let viewModel = FavoritesListViewModel(
-            useCases: useCases,
-            state: FavoritesListViewModel.State(errorLoading: true)
+            state: FavoritesListViewModel.State(errorLoading: true),
+            useCases: useCases
         )
 
         await viewModel.send(.onAppear)
@@ -133,8 +133,8 @@ struct FavoritesListViewModelTests {
         let mockUseCase = MockFavoriteUseCase(favorites: .fixtures, throwError: false)
         let useCases = MockUseCases(favoriteUseCase: mockUseCase)
         let viewModel = FavoritesListViewModel(
-            useCases: useCases,
-            state: FavoritesListViewModel.State()
+            state: FavoritesListViewModel.State(),
+            useCases: useCases
         )
 
         // First load
@@ -150,8 +150,8 @@ struct FavoritesListViewModelTests {
         let mockUseCase = MockFavoriteUseCase(throwError: true)
         let useCases = MockUseCases(favoriteUseCase: mockUseCase)
         let viewModel = FavoritesListViewModel(
-            useCases: useCases,
-            state: FavoritesListViewModel.State()
+            state: FavoritesListViewModel.State(),
+            useCases: useCases
         )
 
         // Fail first
@@ -161,8 +161,8 @@ struct FavoritesListViewModelTests {
         // Create new ViewModel with successful mock to test recovery
         let successfulUseCase = MockFavoriteUseCase(favorites: .fixtures, throwError: false)
         let successfulViewModel = FavoritesListViewModel(
-            useCases: MockUseCases(favoriteUseCase: successfulUseCase),
-            state: FavoritesListViewModel.State()
+            state: FavoritesListViewModel.State(),
+            useCases: MockUseCases(favoriteUseCase: successfulUseCase)
         )
 
         // Retry and succeed
