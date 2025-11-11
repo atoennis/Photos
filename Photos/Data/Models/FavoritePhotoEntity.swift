@@ -15,13 +15,13 @@ final class FavoritePhotoEntity {
     var favoritedAt: Date
 
     init(
-        id: String,
         author: String,
         downloadUrl: String,
+        favoritedAt: Date = Date(),
         height: Int,
+        id: String,
         url: String,
-        width: Int,
-        favoritedAt: Date = Date()
+        width: Int
     ) {
         self.id = id
         self.author = author
@@ -51,10 +51,10 @@ extension FavoritePhotoEntity {
     /// Create SwiftData entity from domain model
     static func from(_ photo: Photo) -> FavoritePhotoEntity {
         FavoritePhotoEntity(
-            id: photo.id,
             author: photo.author,
             downloadUrl: photo.downloadUrl,
             height: photo.height,
+            id: photo.id,
             url: photo.url,
             width: photo.width
         )
