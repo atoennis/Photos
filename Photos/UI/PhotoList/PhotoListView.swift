@@ -1,5 +1,6 @@
 // UI/PhotoList/PhotoListView.swift
 import SwiftUI
+import NukeUI
 
 struct PhotoListView: View {
     @State var viewModel: PhotoListViewModel
@@ -64,21 +65,13 @@ struct PhotoRowView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            // Display the photo using Nuke-based cached image loading
-            CachedAsyncImage(url: URL(string: photo.downloadUrl)) { phase in
-                switch phase {
-                case .empty:
-                    Rectangle()
-                        .fill(Color.gray.opacity(0.2))
-                        .aspectRatio(photo.aspectRatio, contentMode: .fit)
-                        .overlay {
-                            ProgressView()
-                        }
-                case .success(let image):
+            // Display the photo using Nuke for caching
+            LazyImage(url: URL(string: photo.downloadUrl)) { state in
+                if let image = state.image {
                     image
                         .resizable()
                         .aspectRatio(contentMode: .fit)
-                case .failure:
+                } else if state.error != nil {
                     Rectangle()
                         .fill(Color.gray.opacity(0.2))
                         .aspectRatio(photo.aspectRatio, contentMode: .fit)
@@ -86,8 +79,13 @@ struct PhotoRowView: View {
                             Image(systemName: "photo")
                                 .foregroundStyle(.secondary)
                         }
-                @unknown default:
-                    EmptyView()
+                } else {
+                    Rectangle()
+                        .fill(Color.gray.opacity(0.2))
+                        .aspectRatio(photo.aspectRatio, contentMode: .fit)
+                        .overlay {
+                            ProgressView()
+                        }
                 }
             }
             .clipShape(RoundedRectangle(cornerRadius: 8))
