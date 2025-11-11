@@ -34,7 +34,7 @@ struct PhotosApp: App {
                     Label("Favorites", systemImage: "heart.fill")
                 }
             }
-            .environment(\.viewModelFactory, container.viewModelFactory)
+            .environment(\.viewModelFactory, container)
         }
     }
 }

@@ -5,10 +5,16 @@ import SwiftData
 typealias AllUseCases = HasPhotoUseCase
     & HasFavoriteUseCase
 
-struct DIContainer: AllUseCases {
-    var photoUseCase: PhotoUseCase
-    var favoriteUseCase: FavoriteUseCase
-    var viewModelFactory: ViewModelFactory
+struct DIContainer: AllUseCases, ViewModelFactory {
+    let photoUseCase: PhotoUseCase
+    let favoriteUseCase: FavoriteUseCase
+
+    // MARK: - ViewModelFactory
+
+    @MainActor
+    func makePhotoDetailViewModel(photoId: String) -> PhotoDetailViewModel {
+        PhotoDetailViewModel(photoId: photoId, useCases: self)
+    }
 }
 
 extension DIContainer {
@@ -23,17 +29,11 @@ extension DIContainer {
         let photoUseCase = DefaultPhotoUseCase(repository: photoRepository)
         let favoriteRepository = DefaultFavoriteRepository(modelContainer: buildModelContainer())
         let favoriteUseCase = DefaultFavoriteUseCase(repository: favoriteRepository)
-        var viewModelFactory = DefaultViewModelFactory()
 
-        let container = DIContainer(
+        return DIContainer(
             photoUseCase: photoUseCase,
-            favoriteUseCase: favoriteUseCase,
-            viewModelFactory: viewModelFactory
+            favoriteUseCase: favoriteUseCase
         )
-
-        viewModelFactory.useCases = container
-
-        return container
     }
 
     // Mock configuration for tests/previews
@@ -41,15 +41,10 @@ extension DIContainer {
         photoUseCase: PhotoUseCase = MockPhotoUseCase(),
         favoriteUseCase: FavoriteUseCase = MockFavoriteUseCase()
     ) -> DIContainer {
-        var factory = DefaultViewModelFactory()
-        let container = DIContainer(
+        DIContainer(
             photoUseCase: photoUseCase,
-            favoriteUseCase: favoriteUseCase,
-            viewModelFactory: factory
+            favoriteUseCase: favoriteUseCase
         )
-        factory.useCases = container
-
-        return container
     }
 }
 

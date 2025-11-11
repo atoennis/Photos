@@ -3,7 +3,7 @@ import SwiftUI
 
 /// Environment key for injecting ViewModelFactory throughout the app
 private struct ViewModelFactoryKey: EnvironmentKey {
-    static let defaultValue: ViewModelFactory = DIContainer.mock().viewModelFactory
+    static let defaultValue: ViewModelFactory = DIContainer.mock()
 }
 
 extension EnvironmentValues {
