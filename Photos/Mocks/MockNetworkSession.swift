@@ -9,9 +9,9 @@ struct MockNetworkSession: NetworkSession {
 
     // Convenience init that accepts Encodable fixtures and converts to JSON
     init<T: Encodable>(
-        throwError: Bool = false,
+        response: T,
         statusCode: Int = 200,
-        response: T
+        throwError: Bool = false
     ) throws {
         self.throwError = throwError
         self.statusCode = statusCode
@@ -21,7 +21,7 @@ struct MockNetworkSession: NetworkSession {
     }
 
     // Init with raw Data for edge cases (invalid JSON, etc.)
-    init(throwError: Bool = false, statusCode: Int = 200, responseData: Data = Data()) {
+    init(responseData: Data = Data(), statusCode: Int = 200, throwError: Bool = false) {
         self.throwError = throwError
         self.statusCode = statusCode
         self.responseData = responseData
