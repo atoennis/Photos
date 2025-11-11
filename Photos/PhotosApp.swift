@@ -15,14 +15,14 @@ struct PhotosApp: App {
 
     init() {
         // Configure Nuke image pipeline with aggressive caching
-        configureImagePipeline()
+        Self.configureImagePipeline()
 
         // Initialize DI container with model container
         container = DIContainer.real()
     }
 
     /// Configures Nuke's image pipeline with HTTP-based caching
-    private func configureImagePipeline() {
+    private static func configureImagePipeline() {
         let pipeline = ImagePipeline {
             // Use HTTP cache policy - respect cache-control headers
             $0.dataLoader = DataLoader(configuration: {
