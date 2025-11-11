@@ -3,6 +3,7 @@ import SwiftUI
 
 struct PhotoListView: View {
     @State var viewModel: PhotoListViewModel
+    @Environment(\.viewModelFactory) private var factory
 
     var body: some View {
         NavigationStack {
@@ -51,10 +52,7 @@ struct PhotoListView: View {
             .listStyle(.plain)
             .navigationDestination(for: String.self) { photoId in
                 PhotoDetailView(
-                    viewModel: PhotoDetailViewModel(
-                        photoId: photoId,
-                        useCases: viewModel.useCases
-                    )
+                    viewModel: factory.makePhotoDetailViewModel(photoId: photoId)
                 )
             }
         }

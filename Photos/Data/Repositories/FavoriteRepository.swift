@@ -101,7 +101,7 @@ final class DefaultFavoriteRepository: FavoriteRepository {
 
             context.delete(entity)
             try context.save()
-        } catch is FavoriteRepositoryError {
+        } catch let error as FavoriteRepositoryError {
             throw error
         } catch {
             throw FavoriteRepositoryError.deleteFailed

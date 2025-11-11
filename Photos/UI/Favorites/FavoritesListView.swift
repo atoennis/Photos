@@ -3,6 +3,7 @@ import SwiftUI
 
 struct FavoritesListView: View {
     @State var viewModel: FavoritesListViewModel
+    @Environment(\.viewModelFactory) private var factory
 
     var body: some View {
         NavigationStack {
@@ -51,10 +52,7 @@ struct FavoritesListView: View {
             .listStyle(.plain)
             .navigationDestination(for: String.self) { photoId in
                 PhotoDetailView(
-                    viewModel: PhotoDetailViewModel(
-                        photoId: photoId,
-                        useCases: viewModel.useCases
-                    )
+                    viewModel: factory.makePhotoDetailViewModel(photoId: photoId)
                 )
             }
         }

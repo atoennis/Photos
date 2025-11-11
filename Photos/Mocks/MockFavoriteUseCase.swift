@@ -38,8 +38,4 @@ struct MockFavoriteUseCase: FavoriteUseCase {
         // Mock implementation - just succeeds
     }
 }
-
-enum MockError: Error {
-    case mockError
-}
 #endif

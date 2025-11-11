@@ -9,6 +9,17 @@ struct DIContainer: AllUseCases {
     var favoriteUseCase: FavoriteUseCase
 }
 
+// MARK: - ViewModelFactory Conformance
+extension DIContainer: ViewModelFactory {
+    @MainActor
+    func makePhotoDetailViewModel(photoId: String) -> PhotoDetailViewModel {
+        PhotoDetailViewModel(
+            photoId: photoId,
+            useCases: self
+        )
+    }
+}
+
 extension DIContainer {
     // Production configuration
     static func real(modelContainer: ModelContainer) -> DIContainer {
