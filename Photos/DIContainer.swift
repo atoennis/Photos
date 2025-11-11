@@ -38,8 +38,8 @@ extension DIContainer {
 
     // Mock configuration for tests/previews
     static func mock(
-        photoUseCase: PhotoUseCase = MockPhotoUseCase(),
-        favoriteUseCase: FavoriteUseCase = MockFavoriteUseCase()
+        favoriteUseCase: FavoriteUseCase = MockFavoriteUseCase(),
+        photoUseCase: PhotoUseCase = MockPhotoUseCase()
     ) -> DIContainer {
         DIContainer(
             photoUseCase: photoUseCase,
