@@ -64,8 +64,8 @@ struct PhotoRowView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            // Display the photo using AsyncImage
-            AsyncImage(url: URL(string: photo.downloadUrl)) { phase in
+            // Display the photo using Nuke-based cached image loading
+            CachedAsyncImage(url: URL(string: photo.downloadUrl)) { phase in
                 switch phase {
                 case .empty:
                     Rectangle()

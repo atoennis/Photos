@@ -42,8 +42,8 @@ struct PhotoDetailView: View {
     private func photoDetailView(photo: Photo) -> some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 20) {
-                // Photo Image
-                AsyncImage(url: URL(string: photo.downloadUrl)) { phase in
+                // Photo Image with Nuke-based caching
+                CachedAsyncImage(url: URL(string: photo.downloadUrl)) { phase in
                     switch phase {
                     case .empty:
                         Rectangle()
