@@ -64,12 +64,12 @@ struct FavoritesListView: View {
 #Preview("Loaded") {
     FavoritesListView(
         viewModel: .init(
+            state: .init(),
             useCases: DIContainer.mock(
                 favoriteUseCase: MockFavoriteUseCase(
                     favorites: .fixtures
                 )
-            ),
-            state: .init()
+            )
         )
     )
 }
@@ -77,13 +77,13 @@ struct FavoritesListView: View {
 #Preview("Loading") {
     FavoritesListView(
         viewModel: .init(
+            state: .init(),
             useCases: DIContainer.mock(
                 favoriteUseCase: MockFavoriteUseCase(
                     delay: 10,
                     favorites: .fixtures
                 )
-            ),
-            state: .init()
+            )
         )
     )
 }
@@ -91,12 +91,12 @@ struct FavoritesListView: View {
 #Preview("Error") {
     FavoritesListView(
         viewModel: .init(
+            state: .init(),
             useCases: DIContainer.mock(
                 favoriteUseCase: MockFavoriteUseCase(
                     throwError: true
                 )
-            ),
-            state: .init()
+            )
         )
     )
 }
@@ -104,12 +104,12 @@ struct FavoritesListView: View {
 #Preview("Empty") {
     FavoritesListView(
         viewModel: .init(
+            state: .init(),
             useCases: DIContainer.mock(
                 favoriteUseCase: MockFavoriteUseCase(
                     favorites: []
                 )
-            ),
-            state: .init()
+            )
         )
     )
 }

@@ -13,8 +13,8 @@ struct PhotoDetailViewModelTests {
         self.photoUseCase = MockPhotoUseCase()
         self.favoriteUseCase = MockFavoriteUseCase()
         self.useCases = DIContainer.mock(
-            photoUseCase: photoUseCase,
-            favoriteUseCase: favoriteUseCase
+            favoriteUseCase: favoriteUseCase,
+            photoUseCase: photoUseCase
         )
     }
 
