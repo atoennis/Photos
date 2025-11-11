@@ -5,18 +5,22 @@ import Foundation
 
 @MainActor
 struct PhotoDetailViewModelTests {
+    let useCases: AllUseCases
+    var photoUseCase: MockPhotoUseCase
+    var favoriteUseCase: MockFavoriteUseCase
 
-    // MARK: - Mock Dependencies
-
-    struct MockUseCases: HasPhotoUseCase {
-        var photoUseCase: PhotoUseCase
+    init() {
+        self.photoUseCase = MockPhotoUseCase()
+        self.favoriteUseCase = MockFavoriteUseCase()
+        self.useCases = DIContainer.mock(
+            photoUseCase: photoUseCase,
+            favoriteUseCase: favoriteUseCase
+        )
     }
 
     // MARK: - Initial State Tests
 
     @Test func initialState() {
-        let mockUseCase = MockPhotoUseCase()
-        let useCases = MockUseCases(photoUseCase: mockUseCase)
         let viewModel = PhotoDetailViewModel(
             photoId: "0",
             useCases: useCases
@@ -29,8 +33,6 @@ struct PhotoDetailViewModelTests {
     }
 
     @Test func initialStateWithPhotoId() {
-        let mockUseCase = MockPhotoUseCase()
-        let useCases = MockUseCases(photoUseCase: mockUseCase)
         let viewModel = PhotoDetailViewModel(
             photoId: "42",
             useCases: useCases
@@ -43,8 +45,9 @@ struct PhotoDetailViewModelTests {
 
     @Test func fetchPhotoDetailOnAppearSuccess() async {
         let expectedPhoto = Photo.fixture(id: "0")
-        let mockUseCase = MockPhotoUseCase(photo: expectedPhoto, throwError: false)
-        let useCases = MockUseCases(photoUseCase: mockUseCase)
+        let useCases = DIContainer.mock(
+            photoUseCase: MockPhotoUseCase(photo: expectedPhoto)
+        )
         let viewModel = PhotoDetailViewModel(
             photoId: "0",
             useCases: useCases
@@ -61,7 +64,7 @@ struct PhotoDetailViewModelTests {
 
     @Test func fetchPhotoDetailOnAppearError() async {
         let mockUseCase = MockPhotoUseCase(throwError: true)
-        let useCases = MockUseCases(photoUseCase: mockUseCase)
+        let useCases = DIContainer.mock(photoUseCase: mockUseCase)
         let viewModel = PhotoDetailViewModel(
             photoId: "0",
             useCases: useCases
@@ -78,7 +81,7 @@ struct PhotoDetailViewModelTests {
     @Test func fetchPhotoDetailRetrySuccess() async {
         let expectedPhoto = Photo.fixture(id: "0")
         let mockUseCase = MockPhotoUseCase(photo: expectedPhoto, throwError: false)
-        let useCases = MockUseCases(photoUseCase: mockUseCase)
+        let useCases = DIContainer.mock(photoUseCase: mockUseCase)
         let viewModel = PhotoDetailViewModel(
             photoId: "0",
             useCases: useCases,
@@ -97,7 +100,7 @@ struct PhotoDetailViewModelTests {
     @Test func fetchPhotoDetailDifferentIds() async {
         let photo42 = Photo.fixture(id: "42")
         let mockUseCase = MockPhotoUseCase(photo: photo42, throwError: false)
-        let useCases = MockUseCases(photoUseCase: mockUseCase)
+        let useCases = DIContainer.mock(photoUseCase: mockUseCase)
         let viewModel = PhotoDetailViewModel(
             photoId: "42",
             useCases: useCases
@@ -112,7 +115,7 @@ struct PhotoDetailViewModelTests {
 
     @Test func loadingStateSetDuringFetch() async {
         let mockUseCase = MockPhotoUseCase(delay: 0.1, photo: .fixture())
-        let useCases = MockUseCases(photoUseCase: mockUseCase)
+        let useCases = DIContainer.mock(photoUseCase: mockUseCase)
         let viewModel = PhotoDetailViewModel(
             photoId: "0",
             useCases: useCases
@@ -134,7 +137,7 @@ struct PhotoDetailViewModelTests {
 
     @Test func recoverFromError() async {
         let mockUseCase = MockPhotoUseCase(throwError: true)
-        let useCases = MockUseCases(photoUseCase: mockUseCase)
+        let useCases = DIContainer.mock(photoUseCase: mockUseCase)
         let viewModel = PhotoDetailViewModel(
             photoId: "0",
             useCases: useCases
@@ -149,7 +152,7 @@ struct PhotoDetailViewModelTests {
         let successfulUseCase = MockPhotoUseCase(photo: Photo.fixture(id: "0"), throwError: false)
         let successfulViewModel = PhotoDetailViewModel(
             photoId: "0",
-            useCases: MockUseCases(photoUseCase: successfulUseCase)
+            useCases: DIContainer.mock(photoUseCase: successfulUseCase)
         )
 
         // Retry and succeed
@@ -160,7 +163,7 @@ struct PhotoDetailViewModelTests {
 
     @Test func errorStateReset() async {
         let mockUseCase = MockPhotoUseCase(photo: .fixture(), throwError: false)
-        let useCases = MockUseCases(photoUseCase: mockUseCase)
+        let useCases = DIContainer.mock(photoUseCase: mockUseCase)
         let viewModel = PhotoDetailViewModel(
             photoId: "0",
             useCases: useCases,
@@ -175,9 +178,6 @@ struct PhotoDetailViewModelTests {
     // MARK: - Derived State Tests
 
     @Test func hasPhotoComputedProperty() {
-        let mockUseCase = MockPhotoUseCase()
-        let useCases = MockUseCases(photoUseCase: mockUseCase)
-
         // No photo
         var state = PhotoDetailViewModel.State(photo: nil)
         #expect(state.hasPhoto == false)
@@ -191,7 +191,7 @@ struct PhotoDetailViewModelTests {
 
     @Test func onAppearActionTriggersLoad() async {
         let mockUseCase = MockPhotoUseCase(photo: .fixture(id: "123"))
-        let useCases = MockUseCases(photoUseCase: mockUseCase)
+        let useCases = DIContainer.mock(photoUseCase: mockUseCase)
         let viewModel = PhotoDetailViewModel(
             photoId: "123",
             useCases: useCases
@@ -204,7 +204,7 @@ struct PhotoDetailViewModelTests {
 
     @Test func retryActionTriggersLoad() async {
         let mockUseCase = MockPhotoUseCase(photo: .fixture(id: "456"))
-        let useCases = MockUseCases(photoUseCase: mockUseCase)
+        let useCases = DIContainer.mock(photoUseCase: mockUseCase)
         let viewModel = PhotoDetailViewModel(
             photoId: "456",
             useCases: useCases
@@ -227,7 +227,7 @@ struct PhotoDetailViewModelTests {
             width: 1920
         )
         let mockUseCase = MockPhotoUseCase(photo: customPhoto, throwError: false)
-        let useCases = MockUseCases(photoUseCase: mockUseCase)
+        let useCases = DIContainer.mock(photoUseCase: mockUseCase)
         let viewModel = PhotoDetailViewModel(
             photoId: "999",
             useCases: useCases

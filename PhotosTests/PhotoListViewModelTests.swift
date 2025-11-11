@@ -127,7 +127,6 @@ struct PhotoListViewModelTests {
 
     @Test func isEmpty() {
         let mockUseCase = MockPhotoUseCase()
-        let useCases = MockUseCases(photoUseCase: mockUseCase)
 
         // Empty state
         var state = PhotoListViewModel.State(isLoading: false, photos: [])

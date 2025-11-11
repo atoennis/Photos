@@ -4,7 +4,7 @@ import SwiftData
 
 /// Repository protocol for managing favorite photos
 /// Follows Clean Architecture: protocol defined here, but referenced from Domain layer
-protocol FavoriteRepository: Sendable {
+protocol FavoriteRepository {
     func getFavorites() async throws -> [Photo]
     func isFavorite(photoId: String) async throws -> Bool
     func addFavorite(_ photo: Photo) async throws
@@ -20,31 +20,22 @@ enum FavoriteRepositoryError: Error {
 
 /// SwiftData implementation of FavoriteRepository
 /// Uses ModelContext for CRUD operations on FavoritePhotoEntity
-final class DefaultFavoriteRepository: FavoriteRepository {
-    private let modelContainer: ModelContainer
-
-    init(modelContainer: ModelContainer) {
-        self.modelContainer = modelContainer
-    }
-
-    @MainActor
+@ModelActor
+actor DefaultFavoriteRepository: FavoriteRepository {
     func getFavorites() async throws -> [Photo] {
-        let context = modelContainer.mainContext
         let descriptor = FetchDescriptor<FavoritePhotoEntity>(
             sortBy: [SortDescriptor(\.favoritedAt, order: .reverse)]
         )
 
         do {
-            let favorites = try context.fetch(descriptor)
+            let favorites = try modelContext.fetch(descriptor)
             return favorites.map { $0.toPhoto() }
         } catch {
             throw FavoriteRepositoryError.fetchFailed
         }
     }
 
-    @MainActor
     func isFavorite(photoId: String) async throws -> Bool {
-        let context = modelContainer.mainContext
         let predicate = #Predicate<FavoritePhotoEntity> { entity in
             entity.id == photoId
         }
@@ -54,36 +45,30 @@ final class DefaultFavoriteRepository: FavoriteRepository {
         )
 
         do {
-            let count = try context.fetchCount(descriptor)
+            let count = try modelContext.fetchCount(descriptor)
             return count > 0
         } catch {
             throw FavoriteRepositoryError.fetchFailed
         }
     }
 
-    @MainActor
     func addFavorite(_ photo: Photo) async throws {
-        let context = modelContainer.mainContext
-
         // Check if already exists
         let exists = try await isFavorite(photoId: photo.id)
         guard !exists else { return }
 
         // Create and insert entity
         let entity = FavoritePhotoEntity.from(photo)
-        context.insert(entity)
+        modelContext.insert(entity)
 
         do {
-            try context.save()
+            try modelContext.save()
         } catch {
             throw FavoriteRepositoryError.saveFailed
         }
     }
 
-    @MainActor
     func removeFavorite(photoId: String) async throws {
-        let context = modelContainer.mainContext
-
         // Find entity to delete
         let predicate = #Predicate<FavoritePhotoEntity> { entity in
             entity.id == photoId
@@ -94,13 +79,13 @@ final class DefaultFavoriteRepository: FavoriteRepository {
         )
 
         do {
-            let entities = try context.fetch(descriptor)
+            let entities = try modelContext.fetch(descriptor)
             guard let entity = entities.first else {
                 throw FavoriteRepositoryError.notFound
             }
 
-            context.delete(entity)
-            try context.save()
+            modelContext.delete(entity)
+            try modelContext.save()
         } catch let error as FavoriteRepositoryError {
             throw error
         } catch {

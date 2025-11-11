@@ -8,7 +8,7 @@ protocol HasFavoriteUseCase {
 
 /// Use case for managing favorite photos
 /// Business logic layer - coordinates with FavoriteRepository
-protocol FavoriteUseCase: Sendable {
+protocol FavoriteUseCase {
     func getFavorites() async throws -> [Photo]
     func isFavorite(photoId: String) async throws -> Bool
     func toggleFavorite(_ photo: Photo) async throws

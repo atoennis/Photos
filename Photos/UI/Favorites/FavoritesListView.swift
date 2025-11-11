@@ -65,7 +65,7 @@ struct FavoritesListView: View {
     FavoritesListView(
         viewModel: .init(
             useCases: DIContainer.mock(
-                mockFavoriteUseCase: MockFavoriteUseCase(
+                favoriteUseCase: MockFavoriteUseCase(
                     favorites: .fixtures
                 )
             ),
@@ -78,7 +78,7 @@ struct FavoritesListView: View {
     FavoritesListView(
         viewModel: .init(
             useCases: DIContainer.mock(
-                mockFavoriteUseCase: MockFavoriteUseCase(
+                favoriteUseCase: MockFavoriteUseCase(
                     delay: 10,
                     favorites: .fixtures
                 )
@@ -92,7 +92,7 @@ struct FavoritesListView: View {
     FavoritesListView(
         viewModel: .init(
             useCases: DIContainer.mock(
-                mockFavoriteUseCase: MockFavoriteUseCase(
+                favoriteUseCase: MockFavoriteUseCase(
                     throwError: true
                 )
             ),
@@ -105,7 +105,7 @@ struct FavoritesListView: View {
     FavoritesListView(
         viewModel: .init(
             useCases: DIContainer.mock(
-                mockFavoriteUseCase: MockFavoriteUseCase(
+                favoriteUseCase: MockFavoriteUseCase(
                     favorites: []
                 )
             ),

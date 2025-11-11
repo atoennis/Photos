@@ -6,30 +6,15 @@
 //
 
 import SwiftUI
-import SwiftData
 
 @main
 struct PhotosApp: App {
-    // SwiftData model container for persistent storage
-    private let modelContainer: ModelContainer
-
     // Dependency injection container
     private let container: DIContainer
 
     init() {
-        // Initialize SwiftData container with schema
-        do {
-            let schema = Schema([
-                FavoritePhotoEntity.self,
-            ])
-            let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
-            modelContainer = try ModelContainer(for: schema, configurations: [modelConfiguration])
-        } catch {
-            fatalError("Failed to initialize ModelContainer: \(error)")
-        }
-
         // Initialize DI container with model container
-        container = DIContainer.real(modelContainer: modelContainer)
+        container = DIContainer.real()
     }
 
     var body: some Scene {
@@ -49,8 +34,7 @@ struct PhotosApp: App {
                     Label("Favorites", systemImage: "heart.fill")
                 }
             }
-            .environment(\.viewModelFactory, container)
+            .environment(\.viewModelFactory, container.viewModelFactory)
         }
-        .modelContainer(modelContainer)
     }
 }

@@ -116,7 +116,7 @@ struct PhotoRowView: View {
     PhotoListView(
         viewModel: .init(
             useCases: DIContainer.mock(
-                mockPhotoUseCase: MockPhotoUseCase(
+                photoUseCase: MockPhotoUseCase(
                     photos: .fixtures
                 )
             ),
@@ -129,7 +129,7 @@ struct PhotoRowView: View {
     PhotoListView(
         viewModel: .init(
             useCases: DIContainer.mock(
-                mockPhotoUseCase: MockPhotoUseCase(
+                photoUseCase: MockPhotoUseCase(
                     delay: 10,
                     photos: .fixtures
                 )
@@ -143,7 +143,7 @@ struct PhotoRowView: View {
     PhotoListView(
         viewModel: .init(
             useCases: DIContainer.mock(
-                mockPhotoUseCase: MockPhotoUseCase(
+                photoUseCase: MockPhotoUseCase(
                     throwError: true
                 )
             ),
@@ -156,7 +156,7 @@ struct PhotoRowView: View {
     PhotoListView(
         viewModel: .init(
             useCases: DIContainer.mock(
-                mockPhotoUseCase: MockPhotoUseCase(
+                photoUseCase: MockPhotoUseCase(
                     photos: []
                 )
             ),
