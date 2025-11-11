@@ -21,14 +21,14 @@ struct PhotosApp: App {
         WindowGroup {
             TabView {
                 PhotoListView(
-                    viewModel: .init(useCases: container, state: .init())
+                    viewModel: .init(state: .init(), useCases: container)
                 )
                 .tabItem {
                     Label("Photos", systemImage: "photo.fill")
                 }
 
                 FavoritesListView(
-                    viewModel: .init(useCases: container, state: .init())
+                    viewModel: .init(state: .init(), useCases: container)
                 )
                 .tabItem {
                     Label("Favorites", systemImage: "heart.fill")
