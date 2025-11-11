@@ -25,7 +25,7 @@ class FavoritesListViewModel {
     let useCases: UseCases
     var state: State
 
-    init(useCases: UseCases, state: State = State()) {
+    init(state: State = State(), useCases: UseCases) {
         self.useCases = useCases
         self.state = state
     }
