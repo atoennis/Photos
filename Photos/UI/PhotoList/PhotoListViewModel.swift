@@ -26,7 +26,7 @@ class PhotoListViewModel {
     let useCases: UseCases
     var state: State
 
-    init(useCases: UseCases, state: State) {
+    init(state: State, useCases: UseCases) {
         self.useCases = useCases
         self.state = state
     }
