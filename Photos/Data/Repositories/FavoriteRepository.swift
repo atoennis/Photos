@@ -4,7 +4,7 @@ import SwiftData
 
 /// Repository protocol for managing favorite photos
 /// Follows Clean Architecture: protocol defined here, but referenced from Domain layer
-protocol FavoriteRepository {
+protocol FavoriteRepository: Sendable {
     func getFavorites() async throws -> [Photo]
     func isFavorite(photoId: String) async throws -> Bool
     func addFavorite(_ photo: Photo) async throws

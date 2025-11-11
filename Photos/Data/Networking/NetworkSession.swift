@@ -1,7 +1,7 @@
 // Data/Networking/NetworkSession.swift
 import Foundation
 
-protocol NetworkSession {
+protocol NetworkSession: Sendable {
     func data(for request: URLRequest) async throws -> (Data, URLResponse)
 }
 

@@ -2,13 +2,13 @@
 import Foundation
 
 /// Protocol composition for dependency injection
-protocol HasFavoriteUseCase {
+protocol HasFavoriteUseCase: Sendable {
     var favoriteUseCase: FavoriteUseCase { get }
 }
 
 /// Use case for managing favorite photos
 /// Business logic layer - coordinates with FavoriteRepository
-protocol FavoriteUseCase {
+protocol FavoriteUseCase: Sendable {
     func getFavorites() async throws -> [Photo]
     func isFavorite(photoId: String) async throws -> Bool
     func toggleFavorite(_ photo: Photo) async throws

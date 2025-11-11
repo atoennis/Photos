@@ -26,7 +26,7 @@ enum PhotoEndpoint {
     }
 }
 
-protocol PhotoRepository {
+protocol PhotoRepository: Sendable {
     func fetchPhotoDetail(id: String) async throws -> Photo
     func fetchPhotos() async throws -> [Photo]
 }
