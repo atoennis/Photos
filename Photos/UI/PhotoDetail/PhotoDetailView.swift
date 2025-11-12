@@ -43,29 +43,32 @@ struct PhotoDetailView: View {
     private func photoDetailView(photo: Photo) -> some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 20) {
-                // Photo Image with Nuke for caching
-                LazyImage(url: URL(string: photo.downloadUrl)) { state in
-                    if let image = state.image {
-                        image
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                    } else if state.error != nil {
-                        Rectangle()
-                            .fill(Color.gray.opacity(0.2))
-                            .aspectRatio(photo.aspectRatio, contentMode: .fit)
-                            .overlay {
-                                Image(systemName: "photo")
-                                    .foregroundStyle(.secondary)
-                            }
-                    } else {
-                        Rectangle()
-                            .fill(Color.gray.opacity(0.2))
-                            .aspectRatio(photo.aspectRatio, contentMode: .fit)
-                            .overlay {
-                                ProgressView()
-                            }
+                // Photo Image with Nuke for caching and zoom support
+                ZoomableImageView {
+                    LazyImage(url: URL(string: photo.downloadUrl)) { state in
+                        if let image = state.image {
+                            image
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                        } else if state.error != nil {
+                            Rectangle()
+                                .fill(Color.gray.opacity(0.2))
+                                .aspectRatio(photo.aspectRatio, contentMode: .fit)
+                                .overlay {
+                                    Image(systemName: "photo")
+                                        .foregroundStyle(.secondary)
+                                }
+                        } else {
+                            Rectangle()
+                                .fill(Color.gray.opacity(0.2))
+                                .aspectRatio(photo.aspectRatio, contentMode: .fit)
+                                .overlay {
+                                    ProgressView()
+                                }
+                        }
                     }
                 }
+                .frame(height: 400)
                 .clipShape(RoundedRectangle(cornerRadius: 12))
 
                 // Photo Details
