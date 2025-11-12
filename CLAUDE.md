@@ -44,6 +44,46 @@ Data Layer (Infrastructure)
 
 ## Key Conventions
 
+### Code Style
+
+#### Function and Initializer Parameters
+- **Multi-line formatting:** Always use multi-line formatting when there are 2 or more parameters
+- **Alphabetical ordering:** All parameters must be in alphabetical order
+- **Format example:**
+  ```swift
+  func fetchPhotos(
+      limit: Int,
+      sortOrder: SortOrder
+  ) async throws -> [Photo]
+
+  init(
+      repository: PhotoRepository,
+      useCase: PhotoUseCase
+  ) {
+      self.repository = repository
+      self.useCase = useCase
+  }
+  ```
+
+#### Testing Requirements
+- **Always include tests** for new functionality and changes
+- **Test coverage:** Minimum one success case + one failure/error case per public function
+- **Test location:** Tests must be in corresponding test file (e.g., `PhotoListViewModel` → `PhotoListViewModelTests`)
+
+#### String Localization
+- **Never use hard-coded strings** in user-facing code
+- **Always use localized strings** from the string catalog (`Resources/Localizable.xcstrings`)
+- **Key format:** `{Feature}.{Context}.{type}` (e.g., `PhotoList.EmptyState.title`)
+- **Example:**
+  ```swift
+  // ❌ Wrong
+  Text("No photos available")
+
+  // ✅ Correct
+  Text("PhotoList.EmptyState.title", bundle: .main)
+  ```
+- **Note:** Hard-coded strings are acceptable in test code for readability
+
 ### File Organization
 ```
 Photos/
