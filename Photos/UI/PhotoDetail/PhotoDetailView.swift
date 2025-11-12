@@ -23,7 +23,7 @@ struct PhotoDetailView: View {
     private var loadingView: some View {
         VStack(spacing: 16) {
             ProgressView()
-            Text("PhotoDetail.Loading.message", bundle: .main)
+            Text("PhotoDetail.Loading.message")
                 .foregroundStyle(.secondary)
         }
     }
@@ -32,7 +32,7 @@ struct PhotoDetailView: View {
         ContentUnavailableView {
             Label("PhotoDetail.Error.title", systemImage: "exclamationmark.triangle")
         } description: {
-            Text("PhotoDetail.Error.message", bundle: .main)
+            Text("PhotoDetail.Error.message")
         } actions: {
             Button("Common.Retry.label") {
                 Task { await viewModel.send(.retry) }
@@ -74,19 +74,19 @@ struct PhotoDetailView: View {
                 // Photo Details
                 VStack(alignment: .leading, spacing: 12) {
                     DetailRow(
-                        label: String(localized: "PhotoDetail.Author.label", bundle: .main),
+                        label: String(localized: "PhotoDetail.Author.label"),
                         value: photo.author
                     )
                     DetailRow(
-                        label: String(localized: "PhotoDetail.Dimensions.label", bundle: .main),
+                        label: String(localized: "PhotoDetail.Dimensions.label"),
                         value: photo.displayInfo
                     )
                     DetailRow(
-                        label: String(localized: "PhotoDetail.AspectRatio.label", bundle: .main),
+                        label: String(localized: "PhotoDetail.AspectRatio.label"),
                         value: String(format: "%.2f:1", photo.aspectRatio)
                     )
                     DetailRow(
-                        label: String(localized: "PhotoDetail.PhotoID.label", bundle: .main),
+                        label: String(localized: "PhotoDetail.PhotoID.label"),
                         value: photo.id
                     )
                 }
