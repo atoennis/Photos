@@ -38,13 +38,29 @@ struct ZoomableImageView<Content: View>: View {
                         .onEnded { _ in
                             totalScale = currentScale
 
-                            // Reset to min scale if below threshold
-                            if currentScale < minScale {
+                            // Reset offset if at or below min scale
+                            if currentScale <= minScale {
                                 withAnimation(.spring(response: 0.3)) {
                                     currentScale = minScale
                                     totalScale = minScale
                                     currentOffset = .zero
                                     totalOffset = .zero
+                                }
+                            } else {
+                                // Constrain offset to valid bounds for current scale
+                                let constrainedOffset = constrainOffset(
+                                    currentOffset,
+                                    geometry: geometry,
+                                    scale: currentScale
+                                )
+
+                                if constrainedOffset != currentOffset {
+                                    withAnimation(.spring(response: 0.3)) {
+                                        currentOffset = constrainedOffset
+                                        totalOffset = constrainedOffset
+                                    }
+                                } else {
+                                    totalOffset = currentOffset
                                 }
                             }
                         }
@@ -60,14 +76,11 @@ struct ZoomableImageView<Content: View>: View {
                                 height: totalOffset.height + value.translation.height
                             )
 
-                            // Calculate max offset based on scale
-                            let maxOffsetX = (geometry.size.width * (currentScale - 1)) / 2
-                            let maxOffsetY = (geometry.size.height * (currentScale - 1)) / 2
-
                             // Constrain offset to prevent excessive panning
-                            currentOffset = CGSize(
-                                width: min(max(newOffset.width, -maxOffsetX), maxOffsetX),
-                                height: min(max(newOffset.height, -maxOffsetY), maxOffsetY)
+                            currentOffset = constrainOffset(
+                                newOffset,
+                                geometry: geometry,
+                                scale: currentScale
                             )
                         }
                         .onEnded { _ in
@@ -94,6 +107,23 @@ struct ZoomableImageView<Content: View>: View {
                         }
                 )
         }
+    }
+
+    /// Constrains the offset to keep content within valid bounds for the given scale
+    private func constrainOffset(
+        _ offset: CGSize,
+        geometry: GeometryProxy,
+        scale: CGFloat
+    ) -> CGSize {
+        // Calculate maximum allowed offset based on scale
+        // When zoomed, content can be offset by half the "extra" size created by scaling
+        let maxOffsetX = (geometry.size.width * (scale - 1)) / 2
+        let maxOffsetY = (geometry.size.height * (scale - 1)) / 2
+
+        return CGSize(
+            width: min(max(offset.width, -maxOffsetX), maxOffsetX),
+            height: min(max(offset.height, -maxOffsetY), maxOffsetY)
+        )
     }
 }
 
