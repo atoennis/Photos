@@ -13,9 +13,9 @@ struct ZoomableImageView<Content: View>: View {
     @State private var totalOffset: CGSize = .zero
 
     init(
+        @ViewBuilder content: () -> Content,
         maxScale: CGFloat = 4.0,
-        minScale: CGFloat = 1.0,
-        @ViewBuilder content: () -> Content
+        minScale: CGFloat = 1.0
     ) {
         self.content = content()
         self.maxScale = maxScale
