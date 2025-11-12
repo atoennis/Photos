@@ -66,6 +66,7 @@ When reviewing code, be aware of these critical Swift 6 features and proposals:
    - Check for appropriate error handling with Result types and throws/async throws
    - Review protocol usage and generic abstractions
    - Identify code smells, anti-patterns, and technical debt
+   - **Verify modern Swift 6 string catalog usage**: Ensure all localized strings use static member syntax (e.g., `Text(.keyName)`) instead of string literals
 
 4. **Performance & Optimization**
    - Identify potential performance bottlenecks in UI rendering or data processing
@@ -126,6 +127,7 @@ Structure your review as follows:
 - **Performance Concerns**: Potential bottlenecks or inefficient patterns
 - **Architecture Issues**: Violations of separation of concerns or maintainability problems
 - **Code Quality**: Anti-patterns, code smells, or deviation from Swift guidelines
+- **Localization**: Usage of old-style string literals instead of modern Swift 6 static member syntax (e.g., `Text("key")` should be `Text(.key)`)
 
 ### 💡 Suggestions
 - **Modernization**: Opportunities to leverage newer Swift/iOS features

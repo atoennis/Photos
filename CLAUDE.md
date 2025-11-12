@@ -49,6 +49,7 @@ Data Layer (Infrastructure)
 #### Function and Initializer Parameters
 - **Multi-line formatting:** Always use multi-line formatting when there are 2 or more parameters
 - **Alphabetical ordering:** All parameters must be in alphabetical order
+  - **Exception:** Trailing closures should remain at the end and are exempt from alphabetical ordering
 - **Format example:**
   ```swift
   func fetchPhotos(
@@ -63,24 +64,41 @@ Data Layer (Infrastructure)
       self.repository = repository
       self.useCase = useCase
   }
+
+  // Trailing closure exception
+  func performTask(
+      delay: TimeInterval,
+      priority: TaskPriority,
+      operation: () async -> Void
+  ) async {
+      // operation closure remains at end despite alphabetically being first
+  }
   ```
 
 #### Testing Requirements
 - **Always include tests** for new functionality and changes
 - **Test coverage:** Minimum one success case + one failure/error case per public function
 - **Test location:** Tests must be in corresponding test file (e.g., `PhotoListViewModel` → `PhotoListViewModelTests`)
+- **Project inclusion:** When creating new test files, ensure they are added to the Xcode project file (`Photos.xcodeproj`) so they are discovered and run by the test runner
 
 #### String Localization
 - **Never use hard-coded strings** in user-facing code
 - **Always use localized strings** from the string catalog (`Resources/Localizable.xcstrings`)
-- **Key format:** `{Feature}.{Context}.{type}` (e.g., `PhotoList.EmptyState.title`)
+- **Modern Swift 6 syntax:** Use static member syntax with `LocalizedStringResource`
+- **Key format in catalog:** `{Feature}.{Context}.{type}` (e.g., `PhotoList.EmptyState.title`)
 - **Example:**
   ```swift
-  // ❌ Wrong
+  // ❌ Wrong - Hard-coded string
   Text("No photos available")
 
-  // ✅ Correct
+  // ❌ Wrong - Old style with string literal
   Text("PhotoList.EmptyState.title", bundle: .main)
+
+  // ✅ Correct - Modern Swift 6 static member syntax
+  Text(.photoListEmptyStateTitle)
+  Button(.commonRetryLabel) {
+      // action
+  }
   ```
 - **Note:** Hard-coded strings are acceptable in test code for readability
 
@@ -165,6 +183,45 @@ Use the swift6-code-reviewer agent to review my PhotoListViewModel implementatio
 
 ## Important Notes for AI Assistants
 
+### Standard Development Workflow
+
+All development work should follow this three-stage workflow:
+
+1. **Architect Agent** - Plans the implementation approach
+   - **Ask clarifying questions** about requirements, constraints, or ambiguities before planning
+   - Analyzes requirements and existing codebase
+   - Designs the solution architecture
+   - Details how the work should be done
+   - Identifies potential issues and considerations
+   - Provides a clear implementation plan
+
+2. **Implementation** - Executes the plan
+   - **Ask clarifying questions** if the architectural plan is unclear or incomplete
+   - Follows the architectural guidance provided
+   - Writes code according to project conventions
+   - Creates tests for new functionality
+   - Makes small, atomic commits
+   - Ensures each commit compiles and passes tests
+
+3. **Reviewer Agent** - Validates the implementation
+   - **Ask clarifying questions** about design decisions or implementation choices when needed
+   - Reviews all changes for correctness and quality
+   - Checks Swift 6 concurrency compliance
+   - Verifies adherence to project conventions
+   - Identifies potential improvements or issues
+   - Ensures tests adequately cover new functionality
+
+**When to use this workflow:**
+- All non-trivial feature implementations
+- Significant refactoring or architectural changes
+- Bug fixes that require design consideration
+- Any work where planning would improve quality
+
+**When you can skip it:**
+- Trivial changes (typo fixes, formatting)
+- Documentation updates
+- Simple one-line bug fixes with obvious solutions
+
 ### When Making Changes
 1. **Always read existing code** before suggesting changes to understand patterns
 2. **Follow existing conventions** (naming, file structure, architecture)
@@ -173,6 +230,11 @@ Use the swift6-code-reviewer agent to review my PhotoListViewModel implementatio
 5. **Don't add Sendable to protocols** unless there's a specific need (structs infer it automatically)
 6. **ViewModels must be @MainActor** - this is already done, don't remove it
 7. **Tests should not mutate ViewModels** after initialization
+8. **Make small, atomic commits** - each commit should:
+   - Compile successfully without errors or warnings
+   - Include test coverage for any new or modified functionality
+   - Represent a single logical change or unit of work
+   - Be independently reviewable and revertable
 
 ### Common Patterns
 - **ViewModel pattern:**
