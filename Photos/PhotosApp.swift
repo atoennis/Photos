@@ -13,7 +13,7 @@ struct PhotosApp: App {
     private let container: DIContainer
 
     init() {
-        // Initialize DI container with model container
+        // Initialize DI container (handles all infrastructure setup)
         container = DIContainer.real()
     }
 

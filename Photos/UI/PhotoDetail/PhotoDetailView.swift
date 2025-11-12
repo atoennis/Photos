@@ -1,5 +1,6 @@
 // UI/PhotoDetail/PhotoDetailView.swift
 import SwiftUI
+import NukeUI
 
 struct PhotoDetailView: View {
     @State var viewModel: PhotoDetailViewModel
@@ -42,21 +43,13 @@ struct PhotoDetailView: View {
     private func photoDetailView(photo: Photo) -> some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 20) {
-                // Photo Image
-                AsyncImage(url: URL(string: photo.downloadUrl)) { phase in
-                    switch phase {
-                    case .empty:
-                        Rectangle()
-                            .fill(Color.gray.opacity(0.2))
-                            .aspectRatio(photo.aspectRatio, contentMode: .fit)
-                            .overlay {
-                                ProgressView()
-                            }
-                    case .success(let image):
+                // Photo Image with Nuke for caching
+                LazyImage(url: URL(string: photo.downloadUrl)) { state in
+                    if let image = state.image {
                         image
                             .resizable()
                             .aspectRatio(contentMode: .fit)
-                    case .failure:
+                    } else if state.error != nil {
                         Rectangle()
                             .fill(Color.gray.opacity(0.2))
                             .aspectRatio(photo.aspectRatio, contentMode: .fit)
@@ -64,8 +57,13 @@ struct PhotoDetailView: View {
                                 Image(systemName: "photo")
                                     .foregroundStyle(.secondary)
                             }
-                    @unknown default:
-                        EmptyView()
+                    } else {
+                        Rectangle()
+                            .fill(Color.gray.opacity(0.2))
+                            .aspectRatio(photo.aspectRatio, contentMode: .fit)
+                            .overlay {
+                                ProgressView()
+                            }
                     }
                 }
                 .clipShape(RoundedRectangle(cornerRadius: 12))
