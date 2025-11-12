@@ -31,8 +31,8 @@ struct ZoomableImageView<Content: View>: View {
                     MagnificationGesture()
                         .onChanged { value in
                             // Calculate new scale within bounds
-                            let delta = value / currentScale
-                            let newScale = totalScale * delta
+                            // value is the scale relative to gesture start, not absolute
+                            let newScale = totalScale * value
                             currentScale = min(max(newScale, minScale), maxScale)
                         }
                         .onEnded { _ in
