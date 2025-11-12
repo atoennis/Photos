@@ -183,6 +183,42 @@ Use the swift6-code-reviewer agent to review my PhotoListViewModel implementatio
 
 ## Important Notes for AI Assistants
 
+### Standard Development Workflow
+
+All development work should follow this three-stage workflow:
+
+1. **Architect Agent** - Plans the implementation approach
+   - Analyzes requirements and existing codebase
+   - Designs the solution architecture
+   - Details how the work should be done
+   - Identifies potential issues and considerations
+   - Provides a clear implementation plan
+
+2. **Implementation** - Executes the plan
+   - Follows the architectural guidance provided
+   - Writes code according to project conventions
+   - Creates tests for new functionality
+   - Makes small, atomic commits
+   - Ensures each commit compiles and passes tests
+
+3. **Reviewer Agent** - Validates the implementation
+   - Reviews all changes for correctness and quality
+   - Checks Swift 6 concurrency compliance
+   - Verifies adherence to project conventions
+   - Identifies potential improvements or issues
+   - Ensures tests adequately cover new functionality
+
+**When to use this workflow:**
+- All non-trivial feature implementations
+- Significant refactoring or architectural changes
+- Bug fixes that require design consideration
+- Any work where planning would improve quality
+
+**When you can skip it:**
+- Trivial changes (typo fixes, formatting)
+- Documentation updates
+- Simple one-line bug fixes with obvious solutions
+
 ### When Making Changes
 1. **Always read existing code** before suggesting changes to understand patterns
 2. **Follow existing conventions** (naming, file structure, architecture)
