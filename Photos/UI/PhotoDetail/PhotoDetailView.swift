@@ -41,86 +41,157 @@ struct PhotoDetailView: View {
     }
 
     private func photoDetailView(photo: Photo) -> some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 20) {
-                // Photo Image with Nuke for caching and zoom support
-                ZoomableImageView {
-                    LazyImage(url: URL(string: photo.downloadUrl)) { state in
-                        if let image = state.image {
-                            image
-                                .resizable()
-                                .aspectRatio(contentMode: .fit)
-                        } else if state.error != nil {
-                            Rectangle()
-                                .fill(Color.gray.opacity(0.2))
-                                .aspectRatio(photo.aspectRatio, contentMode: .fit)
-                                .overlay {
-                                    Image(systemName: "photo")
-                                        .foregroundStyle(.secondary)
-                                }
-                        } else {
-                            Rectangle()
-                                .fill(Color.gray.opacity(0.2))
-                                .aspectRatio(photo.aspectRatio, contentMode: .fit)
-                                .overlay {
-                                    ProgressView()
-                                }
-                        }
-                    }
-                }
-                .frame(height: 400)
-                .clipShape(RoundedRectangle(cornerRadius: 12))
-
-                // Photo Details
-                VStack(alignment: .leading, spacing: 12) {
-                    DetailRow(
-                        label: String(localized: .photoDetailAuthorLabel),
-                        value: photo.author
-                    )
-                    DetailRow(
-                        label: String(localized: .photoDetailDimensionsLabel),
-                        value: photo.displayInfo
-                    )
-                    DetailRow(
-                        label: String(localized: .photoDetailAspectRatioLabel),
-                        value: String(format: "%.2f:1", photo.aspectRatio)
-                    )
-                    DetailRow(
-                        label: String(localized: .photoDetailPhotoIDLabel),
-                        value: photo.id
-                    )
-                }
-                .padding(.horizontal)
+        PhotoDetailContent(
+            photo: photo,
+            isFavorite: viewModel.state.isFavorite,
+            onToggleFavorite: {
+                Task { await viewModel.send(.toggleFavorite) }
             }
-            .padding()
+        )
+    }
+}
+
+/// The main content view for photo detail with swipe-up panel interaction
+private struct PhotoDetailContent: View {
+    let photo: Photo
+    let isFavorite: Bool
+    let onToggleFavorite: () -> Void
+
+    @State private var isDetailPanelExpanded: Bool = false
+    @State private var dragOffset: CGFloat = 0
+
+    private let panelHeight: CGFloat = 220
+    private let dragThreshold: CGFloat = 50
+
+    var body: some View {
+        GeometryReader { geometry in
+            ZStack {
+                // Layer 1: Full-screen photo with zoom
+                photoLayer
+                    .ignoresSafeArea()
+
+                // Layer 2: Detail panel overlay
+                detailPanelLayer(geometry: geometry)
+            }
         }
         .navigationTitle(.photoDetailNavigationTitle)
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar(isDetailPanelExpanded ? .visible : .hidden, for: .navigationBar)
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
                 Button {
-                    Task { await viewModel.send(.toggleFavorite) }
+                    onToggleFavorite()
                 } label: {
-                    Image(systemName: viewModel.state.isFavorite ? "heart.fill" : "heart")
-                        .foregroundStyle(viewModel.state.isFavorite ? .red : .primary)
+                    Image(systemName: isFavorite ? "heart.fill" : "heart")
+                        .foregroundStyle(isFavorite ? .red : .primary)
                 }
             }
         }
     }
-}
 
-private struct DetailRow: View {
-    let label: String
-    let value: String
-
-    var body: some View {
-        HStack {
-            Text(label)
-                .foregroundStyle(.secondary)
-            Spacer()
-            Text(value)
-                .fontWeight(.medium)
+    private var photoLayer: some View {
+        ZoomableImageView(
+            isEnabled: !isDetailPanelExpanded,
+            onScaleChange: { _ in }
+        ) {
+            LazyImage(url: URL(string: photo.downloadUrl)) { state in
+                if let image = state.image {
+                    image
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                } else if state.error != nil {
+                    Rectangle()
+                        .fill(Color.gray.opacity(0.2))
+                        .aspectRatio(photo.aspectRatio, contentMode: .fit)
+                        .overlay {
+                            Image(systemName: "photo")
+                                .foregroundStyle(.secondary)
+                                .font(.largeTitle)
+                        }
+                } else {
+                    Rectangle()
+                        .fill(Color.gray.opacity(0.2))
+                        .aspectRatio(photo.aspectRatio, contentMode: .fit)
+                        .overlay {
+                            ProgressView()
+                        }
+                }
+            }
         }
+        .gesture(
+            DragGesture()
+                .onChanged { value in
+                    // Only respond to swipe up when not panel is not expanded and zoom is at 1.0
+                    guard !isDetailPanelExpanded else { return }
+
+                    let translation = value.translation.height
+
+                    // Only track upward drags
+                    if translation < 0 {
+                        dragOffset = translation
+                    }
+                }
+                .onEnded { value in
+                    let translation = value.translation.height
+
+                    withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
+                        // Check if dragged up far enough to expand
+                        if !isDetailPanelExpanded && translation < -dragThreshold {
+                            isDetailPanelExpanded = true
+                        }
+
+                        dragOffset = 0
+                    }
+                }
+        )
+    }
+
+    private func detailPanelLayer(geometry: GeometryProxy) -> some View {
+        VStack {
+            Spacer()
+            PhotoDetailPanel(photo: photo)
+                .offset(y: panelOffset(geometry: geometry))
+                .gesture(panelDragGesture(geometry: geometry))
+                .animation(.spring(response: 0.4, dampingFraction: 0.8), value: isDetailPanelExpanded)
+                .animation(.spring(response: 0.4, dampingFraction: 0.8), value: dragOffset)
+        }
+    }
+
+    private func panelOffset(geometry: GeometryProxy) -> CGFloat {
+        let hiddenOffset = panelHeight + geometry.safeAreaInsets.bottom
+
+        if isDetailPanelExpanded {
+            // Panel is expanded - show it with any active drag offset
+            return dragOffset
+        } else {
+            // Panel is collapsed - hide it below screen, adjusted by drag
+            return hiddenOffset + dragOffset
+        }
+    }
+
+    private func panelDragGesture(geometry: GeometryProxy) -> some Gesture {
+        DragGesture()
+            .onChanged { value in
+                let translation = value.translation.height
+
+                if isDetailPanelExpanded {
+                    // Dragging down to collapse - only allow downward movement
+                    dragOffset = max(0, translation)
+                }
+                // Note: Upward drags when collapsed are handled by photoLayer gesture
+            }
+            .onEnded { value in
+                let translation = value.translation.height
+
+                withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
+                    if isDetailPanelExpanded && translation > dragThreshold {
+                        // Dragged down far enough to collapse
+                        isDetailPanelExpanded = false
+                    }
+
+                    dragOffset = 0
+                }
+            }
     }
 }
 
