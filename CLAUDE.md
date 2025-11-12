@@ -188,6 +188,7 @@ Use the swift6-code-reviewer agent to review my PhotoListViewModel implementatio
 All development work should follow this three-stage workflow:
 
 1. **Architect Agent** - Plans the implementation approach
+   - **Ask clarifying questions** about requirements, constraints, or ambiguities before planning
    - Analyzes requirements and existing codebase
    - Designs the solution architecture
    - Details how the work should be done
@@ -195,6 +196,7 @@ All development work should follow this three-stage workflow:
    - Provides a clear implementation plan
 
 2. **Implementation** - Executes the plan
+   - **Ask clarifying questions** if the architectural plan is unclear or incomplete
    - Follows the architectural guidance provided
    - Writes code according to project conventions
    - Creates tests for new functionality
@@ -202,6 +204,7 @@ All development work should follow this three-stage workflow:
    - Ensures each commit compiles and passes tests
 
 3. **Reviewer Agent** - Validates the implementation
+   - **Ask clarifying questions** about design decisions or implementation choices when needed
    - Reviews all changes for correctness and quality
    - Checks Swift 6 concurrency compliance
    - Verifies adherence to project conventions
