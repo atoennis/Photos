@@ -83,14 +83,21 @@ Data Layer (Infrastructure)
 #### String Localization
 - **Never use hard-coded strings** in user-facing code
 - **Always use localized strings** from the string catalog (`Resources/Localizable.xcstrings`)
-- **Key format:** `{Feature}.{Context}.{type}` (e.g., `PhotoList.EmptyState.title`)
+- **Modern Swift 6 syntax:** Use static member syntax with `LocalizedStringResource`
+- **Key format in catalog:** `{Feature}.{Context}.{type}` (e.g., `PhotoList.EmptyState.title`)
 - **Example:**
   ```swift
-  // ❌ Wrong
+  // ❌ Wrong - Hard-coded string
   Text("No photos available")
 
-  // ✅ Correct
+  // ❌ Wrong - Old style with string literal
   Text("PhotoList.EmptyState.title", bundle: .main)
+
+  // ✅ Correct - Modern Swift 6 static member syntax
+  Text(.photoListEmptyStateTitle)
+  Button(.commonRetryLabel) {
+      // action
+  }
   ```
 - **Note:** Hard-coded strings are acceptable in test code for readability
 
