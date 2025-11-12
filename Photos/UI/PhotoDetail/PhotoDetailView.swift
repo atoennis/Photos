@@ -23,18 +23,18 @@ struct PhotoDetailView: View {
     private var loadingView: some View {
         VStack(spacing: 16) {
             ProgressView()
-            Text("Loading photo details...")
+            Text("PhotoDetail.Loading.message", bundle: .main)
                 .foregroundStyle(.secondary)
         }
     }
 
     private var errorView: some View {
         ContentUnavailableView {
-            Label("Failed to Load", systemImage: "exclamationmark.triangle")
+            Label("PhotoDetail.Error.title", systemImage: "exclamationmark.triangle")
         } description: {
-            Text("Could not load photo details")
+            Text("PhotoDetail.Error.message", bundle: .main)
         } actions: {
-            Button("Retry") {
+            Button("Common.Retry.label") {
                 Task { await viewModel.send(.retry) }
             }
         }
@@ -73,16 +73,28 @@ struct PhotoDetailView: View {
 
                 // Photo Details
                 VStack(alignment: .leading, spacing: 12) {
-                    DetailRow(label: "Author", value: photo.author)
-                    DetailRow(label: "Dimensions", value: photo.displayInfo)
-                    DetailRow(label: "Aspect Ratio", value: String(format: "%.2f:1", photo.aspectRatio))
-                    DetailRow(label: "Photo ID", value: photo.id)
+                    DetailRow(
+                        label: String(localized: "PhotoDetail.Author.label", bundle: .main),
+                        value: photo.author
+                    )
+                    DetailRow(
+                        label: String(localized: "PhotoDetail.Dimensions.label", bundle: .main),
+                        value: photo.displayInfo
+                    )
+                    DetailRow(
+                        label: String(localized: "PhotoDetail.AspectRatio.label", bundle: .main),
+                        value: String(format: "%.2f:1", photo.aspectRatio)
+                    )
+                    DetailRow(
+                        label: String(localized: "PhotoDetail.PhotoID.label", bundle: .main),
+                        value: photo.id
+                    )
                 }
                 .padding(.horizontal)
             }
             .padding()
         }
-        .navigationTitle("Photo Details")
+        .navigationTitle("PhotoDetail.NavigationTitle")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
