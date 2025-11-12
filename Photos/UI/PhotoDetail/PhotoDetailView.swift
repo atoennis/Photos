@@ -23,18 +23,18 @@ struct PhotoDetailView: View {
     private var loadingView: some View {
         VStack(spacing: 16) {
             ProgressView()
-            Text("PhotoDetail.Loading.message")
+            Text(.photoDetailLoadingMessage)
                 .foregroundStyle(.secondary)
         }
     }
 
     private var errorView: some View {
         ContentUnavailableView {
-            Label("PhotoDetail.Error.title", systemImage: "exclamationmark.triangle")
+            Label(.photoDetailErrorTitle, systemImage: "exclamationmark.triangle")
         } description: {
-            Text("PhotoDetail.Error.message")
+            Text(.photoDetailErrorMessage)
         } actions: {
-            Button("Common.Retry.label") {
+            Button(.commonRetryLabel) {
                 Task { await viewModel.send(.retry) }
             }
         }
@@ -74,19 +74,19 @@ struct PhotoDetailView: View {
                 // Photo Details
                 VStack(alignment: .leading, spacing: 12) {
                     DetailRow(
-                        label: String(localized: "PhotoDetail.Author.label"),
+                        label: String(localized: .photoDetailAuthorLabel),
                         value: photo.author
                     )
                     DetailRow(
-                        label: String(localized: "PhotoDetail.Dimensions.label"),
+                        label: String(localized: .photoDetailDimensionsLabel),
                         value: photo.displayInfo
                     )
                     DetailRow(
-                        label: String(localized: "PhotoDetail.AspectRatio.label"),
+                        label: String(localized: .photoDetailAspectRatioLabel),
                         value: String(format: "%.2f:1", photo.aspectRatio)
                     )
                     DetailRow(
-                        label: String(localized: "PhotoDetail.PhotoID.label"),
+                        label: String(localized: .photoDetailPhotoIDLabel),
                         value: photo.id
                     )
                 }
@@ -94,7 +94,7 @@ struct PhotoDetailView: View {
             }
             .padding()
         }
-        .navigationTitle("PhotoDetail.NavigationTitle")
+        .navigationTitle(.photoDetailNavigationTitle)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
