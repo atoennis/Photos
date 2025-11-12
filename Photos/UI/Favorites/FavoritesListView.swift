@@ -45,7 +45,14 @@ struct FavoritesListView: View {
             List {
                 ForEach(viewModel.state.favorites) { photo in
                     NavigationLink(value: photo.id) {
-                        PhotoRowView(photo: photo)
+                        PhotoRowView(
+                            isFavorite: true,
+                            photo: photo
+                        ) {
+                            Task {
+                                await viewModel.send(.toggleFavorite(photo))
+                            }
+                        }
                     }
                 }
             }

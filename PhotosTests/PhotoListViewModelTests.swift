@@ -8,7 +8,8 @@ struct PhotoListViewModelTests {
 
     // MARK: - Mock Dependencies
 
-    struct MockUseCases: HasPhotoUseCase {
+    struct MockUseCases: HasPhotoUseCase & HasFavoriteUseCase {
+        var favoriteUseCase: FavoriteUseCase
         var photoUseCase: PhotoUseCase
     }
 
@@ -16,7 +17,11 @@ struct PhotoListViewModelTests {
 
     @Test func initialState() {
         let mockUseCase = MockPhotoUseCase()
-        let useCases = MockUseCases(photoUseCase: mockUseCase)
+        let mockFavoriteUseCase = MockFavoriteUseCase(favorites: [])
+        let useCases = MockUseCases(
+            favoriteUseCase: mockFavoriteUseCase,
+            photoUseCase: mockUseCase
+        )
         let initialState = PhotoListViewModel.State()
         let viewModel = PhotoListViewModel(state: initialState, useCases: useCases)
 
@@ -30,7 +35,11 @@ struct PhotoListViewModelTests {
 
     @Test func fetchPhotosOnAppearSuccess() async {
         let mockUseCase = MockPhotoUseCase(photos: .fixtures, throwError: false)
-        let useCases = MockUseCases(photoUseCase: mockUseCase)
+        let mockFavoriteUseCase = MockFavoriteUseCase(favorites: [])
+        let useCases = MockUseCases(
+            favoriteUseCase: mockFavoriteUseCase,
+            photoUseCase: mockUseCase
+        )
         let viewModel = PhotoListViewModel(
             state: PhotoListViewModel.State(),
             useCases: useCases
@@ -46,7 +55,11 @@ struct PhotoListViewModelTests {
 
     @Test func fetchPhotosOnAppearError() async {
         let mockUseCase = MockPhotoUseCase(throwError: true)
-        let useCases = MockUseCases(photoUseCase: mockUseCase)
+        let mockFavoriteUseCase = MockFavoriteUseCase(favorites: [])
+        let useCases = MockUseCases(
+            favoriteUseCase: mockFavoriteUseCase,
+            photoUseCase: mockUseCase
+        )
         let viewModel = PhotoListViewModel(
             state: PhotoListViewModel.State(),
             useCases: useCases
@@ -62,7 +75,11 @@ struct PhotoListViewModelTests {
 
     @Test func fetchPhotosRetrySuccess() async {
         let mockUseCase = MockPhotoUseCase(photos: .fixtures, throwError: false)
-        let useCases = MockUseCases(photoUseCase: mockUseCase)
+        let mockFavoriteUseCase = MockFavoriteUseCase(favorites: [])
+        let useCases = MockUseCases(
+            favoriteUseCase: mockFavoriteUseCase,
+            photoUseCase: mockUseCase
+        )
         let viewModel = PhotoListViewModel(
             state: PhotoListViewModel.State(errorLoading: true),
             useCases: useCases
@@ -77,7 +94,11 @@ struct PhotoListViewModelTests {
 
     @Test func fetchPhotosRefreshPulledSuccess() async {
         let mockUseCase = MockPhotoUseCase(photos: .fixtures, throwError: false)
-        let useCases = MockUseCases(photoUseCase: mockUseCase)
+        let mockFavoriteUseCase = MockFavoriteUseCase(favorites: [])
+        let useCases = MockUseCases(
+            favoriteUseCase: mockFavoriteUseCase,
+            photoUseCase: mockUseCase
+        )
         let initialPhotos = [Photo.fixture(id: "old")]
         let viewModel = PhotoListViewModel(
             state: PhotoListViewModel.State(photos: initialPhotos),
@@ -93,7 +114,11 @@ struct PhotoListViewModelTests {
 
     @Test func fetchPhotosRefreshPulledDoesNotShowLoading() async {
         let mockUseCase = MockPhotoUseCase(delay: 0.1, photos: .fixtures)
-        let useCases = MockUseCases(photoUseCase: mockUseCase)
+        let mockFavoriteUseCase = MockFavoriteUseCase(favorites: [])
+        let useCases = MockUseCases(
+            favoriteUseCase: mockFavoriteUseCase,
+            photoUseCase: mockUseCase
+        )
         let viewModel = PhotoListViewModel(
             state: PhotoListViewModel.State(),
             useCases: useCases
@@ -114,7 +139,11 @@ struct PhotoListViewModelTests {
 
     @Test func errorStateReset() async {
         let mockUseCase = MockPhotoUseCase(photos: .fixtures, throwError: false)
-        let useCases = MockUseCases(photoUseCase: mockUseCase)
+        let mockFavoriteUseCase = MockFavoriteUseCase(favorites: [])
+        let useCases = MockUseCases(
+            favoriteUseCase: mockFavoriteUseCase,
+            photoUseCase: mockUseCase
+        )
         let viewModel = PhotoListViewModel(
             state: PhotoListViewModel.State(errorLoading: true),
             useCases: useCases
@@ -143,7 +172,11 @@ struct PhotoListViewModelTests {
 
     @Test func multipleActionsInSequence() async {
         let mockUseCase = MockPhotoUseCase(photos: .fixtures, throwError: false)
-        let useCases = MockUseCases(photoUseCase: mockUseCase)
+        let mockFavoriteUseCase = MockFavoriteUseCase(favorites: [])
+        let useCases = MockUseCases(
+            favoriteUseCase: mockFavoriteUseCase,
+            photoUseCase: mockUseCase
+        )
         let viewModel = PhotoListViewModel(
             state: PhotoListViewModel.State(),
             useCases: useCases
@@ -164,7 +197,11 @@ struct PhotoListViewModelTests {
 
     @Test func recoverFromError() async {
         let mockUseCase = MockPhotoUseCase(throwError: true)
-        let useCases = MockUseCases(photoUseCase: mockUseCase)
+        let mockFavoriteUseCase = MockFavoriteUseCase(favorites: [])
+        let useCases = MockUseCases(
+            favoriteUseCase: mockFavoriteUseCase,
+            photoUseCase: mockUseCase
+        )
         let viewModel = PhotoListViewModel(
             state: PhotoListViewModel.State(),
             useCases: useCases
@@ -176,14 +213,149 @@ struct PhotoListViewModelTests {
 
         // Create new ViewModel with successful mock to test recovery
         let successfulUseCase = MockPhotoUseCase(photos: .fixtures, throwError: false)
+        let successfulFavoriteUseCase = MockFavoriteUseCase(favorites: [])
         let successfulViewModel = PhotoListViewModel(
             state: PhotoListViewModel.State(),
-            useCases: MockUseCases(photoUseCase: successfulUseCase)
+            useCases: MockUseCases(
+                favoriteUseCase: successfulFavoriteUseCase,
+                photoUseCase: successfulUseCase
+            )
         )
 
         // Retry and succeed
         await successfulViewModel.send(.retry)
         #expect(successfulViewModel.state.errorLoading == false)
         #expect(successfulViewModel.state.photos.count == 5)
+    }
+
+    // MARK: - Favorite Tests
+
+    @Test func toggleFavoriteAddsToFavorites() async {
+        let photo = Photo.fixture(id: "test-photo")
+        let mockFavoriteUseCase = MockFavoriteUseCase(favorites: [])
+        let useCases = MockUseCases(
+            favoriteUseCase: mockFavoriteUseCase,
+            photoUseCase: MockPhotoUseCase(photos: [photo])
+        )
+        let viewModel = PhotoListViewModel(
+            state: PhotoListViewModel.State(photos: [photo]),
+            useCases: useCases
+        )
+
+        await viewModel.send(.toggleFavorite(photo))
+
+        #expect(viewModel.state.favoritePhotoIds.contains("test-photo"))
+    }
+
+    @Test func toggleFavoriteRemovesFromFavorites() async {
+        let photo = Photo.fixture(id: "test-photo")
+        let mockFavoriteUseCase = MockFavoriteUseCase(favorites: [photo])
+        let useCases = MockUseCases(
+            favoriteUseCase: mockFavoriteUseCase,
+            photoUseCase: MockPhotoUseCase(photos: [photo])
+        )
+        let viewModel = PhotoListViewModel(
+            state: PhotoListViewModel.State(
+                favoritePhotoIds: ["test-photo"],
+                photos: [photo]
+            ),
+            useCases: useCases
+        )
+
+        await viewModel.send(.toggleFavorite(photo))
+
+        #expect(!viewModel.state.favoritePhotoIds.contains("test-photo"))
+    }
+
+    @Test func onAppearLoadsFavoriteStatus() async {
+        let favoritePhoto = Photo.fixture(id: "fav-1")
+        let regularPhoto = Photo.fixture(id: "reg-1")
+        let mockFavoriteUseCase = MockFavoriteUseCase(favorites: [favoritePhoto])
+        let useCases = MockUseCases(
+            favoriteUseCase: mockFavoriteUseCase,
+            photoUseCase: MockPhotoUseCase(photos: [favoritePhoto, regularPhoto])
+        )
+        let viewModel = PhotoListViewModel(
+            state: PhotoListViewModel.State(),
+            useCases: useCases
+        )
+
+        await viewModel.send(.onAppear)
+
+        #expect(viewModel.state.favoritePhotoIds.contains("fav-1"))
+        #expect(!viewModel.state.favoritePhotoIds.contains("reg-1"))
+    }
+
+    @Test func isFavoriteReturnsTrueForFavoritedPhoto() {
+        let state = PhotoListViewModel.State(
+            favoritePhotoIds: ["fav-1", "fav-2"]
+        )
+
+        #expect(state.isFavorite(photoId: "fav-1"))
+        #expect(state.isFavorite(photoId: "fav-2"))
+        #expect(!state.isFavorite(photoId: "not-fav"))
+    }
+
+    @Test func toggleFavoriteRollbackOnError() async {
+        let photo = Photo.fixture(id: "test-photo")
+        let mockFavoriteUseCase = MockFavoriteUseCase(
+            favorites: [],
+            throwError: true
+        )
+        let useCases = MockUseCases(
+            favoriteUseCase: mockFavoriteUseCase,
+            photoUseCase: MockPhotoUseCase(photos: [photo])
+        )
+        let viewModel = PhotoListViewModel(
+            state: PhotoListViewModel.State(photos: [photo]),
+            useCases: useCases
+        )
+
+        await viewModel.send(.toggleFavorite(photo))
+
+        // Should not have added to favorites due to error
+        #expect(!viewModel.state.favoritePhotoIds.contains("test-photo"))
+        // Should have error message
+        #expect(viewModel.state.errorMessage != nil)
+    }
+
+    @Test func toggleFavoriteRollbackRemovalOnError() async {
+        let photo = Photo.fixture(id: "test-photo")
+        let mockFavoriteUseCase = MockFavoriteUseCase(
+            favorites: [photo],
+            throwError: true
+        )
+        let useCases = MockUseCases(
+            favoriteUseCase: mockFavoriteUseCase,
+            photoUseCase: MockPhotoUseCase(photos: [photo])
+        )
+        let viewModel = PhotoListViewModel(
+            state: PhotoListViewModel.State(
+                favoritePhotoIds: ["test-photo"],
+                photos: [photo]
+            ),
+            useCases: useCases
+        )
+
+        await viewModel.send(.toggleFavorite(photo))
+
+        // Should still be in favorites after rollback
+        #expect(viewModel.state.favoritePhotoIds.contains("test-photo"))
+        // Should have error message
+        #expect(viewModel.state.errorMessage != nil)
+    }
+
+    @Test func dismissErrorClearsErrorMessage() async {
+        let viewModel = PhotoListViewModel(
+            state: PhotoListViewModel.State(errorMessage: "Some error"),
+            useCases: MockUseCases(
+                favoriteUseCase: MockFavoriteUseCase(favorites: []),
+                photoUseCase: MockPhotoUseCase(photos: [])
+            )
+        )
+
+        await viewModel.send(.dismissError)
+
+        #expect(viewModel.state.errorMessage == nil)
     }
 }

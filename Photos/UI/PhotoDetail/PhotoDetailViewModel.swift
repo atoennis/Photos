@@ -14,9 +14,10 @@ class PhotoDetailViewModel {
     // State is equatable for testability
     struct State: Equatable {
         var errorLoading: Bool = false
+        var errorMessage: String? = nil
+        var isFavorite: Bool = false
         var isLoading: Bool = false
         var photo: Photo? = nil
-        var isFavorite: Bool = false
 
         // Derived state as computed properties
         var hasPhoto: Bool { photo != nil }
@@ -73,12 +74,24 @@ class PhotoDetailViewModel {
     private func toggleFavorite() async {
         guard let photo = state.photo else { return }
 
+        // Clear any previous error
+        state.errorMessage = nil
+
+        // Capture current state for rollback
+        let wasOptimisticallyFavorited = state.isFavorite
+
+        // Optimistic update - instant UI feedback
+        state.isFavorite.toggle()
+
+        // Persist change
         do {
             try await useCases.favoriteUseCase.toggleFavorite(photo)
-            // Update local state after successful toggle
-            state.isFavorite.toggle()
         } catch {
-            // Could add error handling here if needed
+            // Rollback on failure
+            state.isFavorite = wasOptimisticallyFavorited
+
+            // Set error message
+            state.errorMessage = "Failed to update favorite"
         }
     }
 }
