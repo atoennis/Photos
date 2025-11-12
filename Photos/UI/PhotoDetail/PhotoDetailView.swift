@@ -23,18 +23,18 @@ struct PhotoDetailView: View {
     private var loadingView: some View {
         VStack(spacing: 16) {
             ProgressView()
-            Text("Loading photo details...")
+            Text(.photoDetailLoadingMessage)
                 .foregroundStyle(.secondary)
         }
     }
 
     private var errorView: some View {
         ContentUnavailableView {
-            Label("Failed to Load", systemImage: "exclamationmark.triangle")
+            Label(.photoDetailErrorTitle, systemImage: "exclamationmark.triangle")
         } description: {
-            Text("Could not load photo details")
+            Text(.photoDetailErrorMessage)
         } actions: {
-            Button("Retry") {
+            Button(.commonRetryLabel) {
                 Task { await viewModel.send(.retry) }
             }
         }
@@ -43,43 +43,58 @@ struct PhotoDetailView: View {
     private func photoDetailView(photo: Photo) -> some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 20) {
-                // Photo Image with Nuke for caching
-                LazyImage(url: URL(string: photo.downloadUrl)) { state in
-                    if let image = state.image {
-                        image
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                    } else if state.error != nil {
-                        Rectangle()
-                            .fill(Color.gray.opacity(0.2))
-                            .aspectRatio(photo.aspectRatio, contentMode: .fit)
-                            .overlay {
-                                Image(systemName: "photo")
-                                    .foregroundStyle(.secondary)
-                            }
-                    } else {
-                        Rectangle()
-                            .fill(Color.gray.opacity(0.2))
-                            .aspectRatio(photo.aspectRatio, contentMode: .fit)
-                            .overlay {
-                                ProgressView()
-                            }
+                // Photo Image with Nuke for caching and zoom support
+                ZoomableImageView {
+                    LazyImage(url: URL(string: photo.downloadUrl)) { state in
+                        if let image = state.image {
+                            image
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                        } else if state.error != nil {
+                            Rectangle()
+                                .fill(Color.gray.opacity(0.2))
+                                .aspectRatio(photo.aspectRatio, contentMode: .fit)
+                                .overlay {
+                                    Image(systemName: "photo")
+                                        .foregroundStyle(.secondary)
+                                }
+                        } else {
+                            Rectangle()
+                                .fill(Color.gray.opacity(0.2))
+                                .aspectRatio(photo.aspectRatio, contentMode: .fit)
+                                .overlay {
+                                    ProgressView()
+                                }
+                        }
                     }
                 }
+                .frame(height: 400)
                 .clipShape(RoundedRectangle(cornerRadius: 12))
 
                 // Photo Details
                 VStack(alignment: .leading, spacing: 12) {
-                    DetailRow(label: "Author", value: photo.author)
-                    DetailRow(label: "Dimensions", value: photo.displayInfo)
-                    DetailRow(label: "Aspect Ratio", value: String(format: "%.2f:1", photo.aspectRatio))
-                    DetailRow(label: "Photo ID", value: photo.id)
+                    DetailRow(
+                        label: String(localized: .photoDetailAuthorLabel),
+                        value: photo.author
+                    )
+                    DetailRow(
+                        label: String(localized: .photoDetailDimensionsLabel),
+                        value: photo.displayInfo
+                    )
+                    DetailRow(
+                        label: String(localized: .photoDetailAspectRatioLabel),
+                        value: String(format: "%.2f:1", photo.aspectRatio)
+                    )
+                    DetailRow(
+                        label: String(localized: .photoDetailPhotoIDLabel),
+                        value: photo.id
+                    )
                 }
                 .padding(.horizontal)
             }
             .padding()
         }
-        .navigationTitle("Photo Details")
+        .navigationTitle(.photoDetailNavigationTitle)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .primaryAction) {

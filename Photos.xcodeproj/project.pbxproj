@@ -14,6 +14,7 @@
 		66013A382EB95CA300E103AC /* PhotoJSONTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66013A2C2EB95CA300E103AC /* PhotoJSONTests.swift */; };
 		66013A3A2EB95CA300E103AC /* PhotoRepositoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66013A2F2EB95CA300E103AC /* PhotoRepositoryTests.swift */; };
 		66013A442EBA573E00E103AC /* PhotoDetailViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66013A432EBA573E00E103AC /* PhotoDetailViewModelTests.swift */; };
+		66A80F6D2EC50F5400552854 /* ZoomableImageViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66A80F6C2EC50F5400552854 /* ZoomableImageViewTests.swift */; };
 		66NUKE0012EB95CA300E103AC /* Nuke in Frameworks */ = {isa = PBXBuildFile; productRef = 66NUKE0011EB95CA300E103AC /* Nuke */; };
 		66NUKE0022EB95CA300E103AC /* NukeUI in Frameworks */ = {isa = PBXBuildFile; productRef = 66NUKE0021EB95CA300E103AC /* NukeUI */; };
 /* End PBXBuildFile section */
@@ -38,6 +39,7 @@
 		66013A2F2EB95CA300E103AC /* PhotoRepositoryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoRepositoryTests.swift; sourceTree = "<group>"; };
 		66013A332EB95CA300E103AC /* PhotoUseCaseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoUseCaseTests.swift; sourceTree = "<group>"; };
 		66013A432EBA573E00E103AC /* PhotoDetailViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoDetailViewModelTests.swift; sourceTree = "<group>"; };
+		66A80F6C2EC50F5400552854 /* ZoomableImageViewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZoomableImageViewTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -175,6 +177,7 @@
 		66013A342EB95CA300E103AC /* UI */ = {
 			isa = PBXGroup;
 			children = (
+				66A80F6C2EC50F5400552854 /* ZoomableImageViewTests.swift */,
 				66013A432EBA573E00E103AC /* PhotoDetailViewModelTests.swift */,
 			);
 			path = UI;
@@ -299,6 +302,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				66013A352EB95CA300E103AC /* PhotoListViewModelTests.swift in Sources */,
+				66A80F6D2EC50F5400552854 /* ZoomableImageViewTests.swift in Sources */,
 				66013A362EB95CA300E103AC /* PhotoModelTests.swift in Sources */,
 				66013A372EB95CA300E103AC /* PhotoUseCaseTests.swift in Sources */,
 				66013A382EB95CA300E103AC /* PhotoJSONTests.swift in Sources */,

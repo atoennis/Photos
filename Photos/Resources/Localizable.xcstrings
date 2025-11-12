@@ -15,16 +15,10 @@
         }
       }
     },
-    "Could not load photo details" : {
-
-    },
     "Error Loading Favorites" : {
 
     },
     "Error Loading Photos" : {
-
-    },
-    "Failed to Load" : {
 
     },
     "Favorite photos will appear here" : {
@@ -39,25 +33,104 @@
     "ID: %@" : {
 
     },
-    "Loading photo details..." : {
-
-    },
     "No Favorites Yet" : {
 
     },
     "No Photos Yet" : {
 
     },
-    "Photo Details" : {
-
+    "PhotoDetail.AspectRatio.label" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aspect Ratio"
+          }
+        }
+      }
+    },
+    "PhotoDetail.Author.label" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Author"
+          }
+        }
+      }
+    },
+    "PhotoDetail.Dimensions.label" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dimensions"
+          }
+        }
+      }
+    },
+    "PhotoDetail.Error.message" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Could not load photo details"
+          }
+        }
+      }
+    },
+    "PhotoDetail.Error.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Failed to Load"
+          }
+        }
+      }
+    },
+    "PhotoDetail.Loading.message" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Loading photo details..."
+          }
+        }
+      }
+    },
+    "PhotoDetail.NavigationTitle" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Photo Details"
+          }
+        }
+      }
+    },
+    "PhotoDetail.PhotoID.label" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Photo ID"
+          }
+        }
+      }
     },
     "Photos" : {
 
     },
     "Pull to refresh to load photos" : {
-
-    },
-    "Retry" : {
 
     },
     "Unable to load favorites. Please try again." : {
