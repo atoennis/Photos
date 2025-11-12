@@ -79,6 +79,7 @@ Data Layer (Infrastructure)
 - **Always include tests** for new functionality and changes
 - **Test coverage:** Minimum one success case + one failure/error case per public function
 - **Test location:** Tests must be in corresponding test file (e.g., `PhotoListViewModel` → `PhotoListViewModelTests`)
+- **Project inclusion:** When creating new test files, ensure they are added to the Xcode project file (`Photos.xcodeproj`) so they are discovered and run by the test runner
 
 #### String Localization
 - **Never use hard-coded strings** in user-facing code
