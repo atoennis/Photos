@@ -74,19 +74,19 @@ struct PhotoDetailView: View {
                 // Photo Details
                 VStack(alignment: .leading, spacing: 12) {
                     DetailRow(
-                        systemImage: "person.fill",
+                        label: String(localized: "PhotoDetail.Author.label", bundle: .main),
                         value: photo.author
                     )
                     DetailRow(
-                        systemImage: "arrow.up.left.and.arrow.down.right",
+                        label: String(localized: "PhotoDetail.Dimensions.label", bundle: .main),
                         value: photo.displayInfo
                     )
                     DetailRow(
-                        systemImage: "aspectratio.fill",
+                        label: String(localized: "PhotoDetail.AspectRatio.label", bundle: .main),
                         value: String(format: "%.2f:1", photo.aspectRatio)
                     )
                     DetailRow(
-                        systemImage: "number",
+                        label: String(localized: "PhotoDetail.PhotoID.label", bundle: .main),
                         value: photo.id
                     )
                 }
@@ -110,14 +110,13 @@ struct PhotoDetailView: View {
 }
 
 private struct DetailRow: View {
-    let systemImage: String
+    let label: String
     let value: String
 
     var body: some View {
         HStack {
-            Image(systemName: systemImage)
+            Text(label)
                 .foregroundStyle(.secondary)
-                .frame(width: 20)
             Spacer()
             Text(value)
                 .fontWeight(.medium)
