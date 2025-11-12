@@ -13,9 +13,9 @@ struct ZoomableImageView<Content: View>: View {
     @State private var totalOffset: CGSize = .zero
 
     init(
-        @ViewBuilder content: () -> Content,
         maxScale: CGFloat = 4.0,
-        minScale: CGFloat = 1.0
+        minScale: CGFloat = 1.0,
+        @ViewBuilder content: () -> Content
     ) {
         self.content = content()
         self.maxScale = maxScale
@@ -27,7 +27,7 @@ struct ZoomableImageView<Content: View>: View {
             content
                 .scaleEffect(currentScale)
                 .offset(x: currentOffset.width, y: currentOffset.height)
-                .gesture(
+                .highPriorityGesture(
                     MagnificationGesture()
                         .onChanged { value in
                             // Calculate new scale within bounds
@@ -49,7 +49,7 @@ struct ZoomableImageView<Content: View>: View {
                             }
                         }
                 )
-                .gesture(
+                .highPriorityGesture(
                     DragGesture()
                         .onChanged { value in
                             // Only allow panning if zoomed in
