@@ -20,6 +20,19 @@ struct PhotoListView: View {
                 } message: {
                     Text("Unable to load photos. Please try again.")
                 }
+                .alert(
+                    "Error",
+                    isPresented: Binding(
+                        get: { viewModel.state.errorMessage != nil },
+                        set: { if !$0 { Task { await viewModel.send(.dismissError) } } }
+                    )
+                ) {
+                    Button("OK", role: .cancel) {}
+                } message: {
+                    if let errorMessage = viewModel.state.errorMessage {
+                        Text(errorMessage)
+                    }
+                }
                 .overlay {
                     if viewModel.state.isLoading {
                         ProgressView()
@@ -46,7 +59,14 @@ struct PhotoListView: View {
             List {
                 ForEach(viewModel.state.photos) { photo in
                     NavigationLink(value: photo.id) {
-                        PhotoRowView(photo: photo)
+                        PhotoRowView(
+                            isFavorite: viewModel.state.isFavorite(photoId: photo.id),
+                            photo: photo
+                        ) {
+                            Task {
+                                await viewModel.send(.toggleFavorite(photo))
+                            }
+                        }
                     }
                 }
             }
@@ -61,7 +81,9 @@ struct PhotoListView: View {
 }
 
 struct PhotoRowView: View {
+    let isFavorite: Bool
     let photo: Photo
+    let onToggleFavorite: () -> Void
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -89,6 +111,28 @@ struct PhotoRowView: View {
                 }
             }
             .clipShape(RoundedRectangle(cornerRadius: 8))
+            .overlay(alignment: .topTrailing) {
+                Button {
+                    onToggleFavorite()
+                } label: {
+                    Image(systemName: isFavorite ? "heart.fill" : "heart")
+                        .foregroundStyle(isFavorite ? .red : .white)
+                        .font(.title2)
+                        .shadow(
+                            color: .black.opacity(0.3),
+                            radius: 2,
+                            x: 0,
+                            y: 1
+                        )
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel(
+                    isFavorite
+                        ? String(localized: .photoListUnfavoriteButtonAccessibilityLabel)
+                        : String(localized: .photoListFavoriteButtonAccessibilityLabel)
+                )
+                .padding(8)
+            }
 
             // Photo info
             VStack(alignment: .leading, spacing: 4) {
@@ -115,6 +159,7 @@ struct PhotoRowView: View {
         viewModel: .init(
             state: .init(),
             useCases: DIContainer.mock(
+                favoriteUseCase: MockFavoriteUseCase(favorites: [.fixture(id: "0")]),
                 photoUseCase: MockPhotoUseCase(
                     photos: .fixtures
                 )
@@ -128,6 +173,7 @@ struct PhotoRowView: View {
         viewModel: .init(
             state: .init(),
             useCases: DIContainer.mock(
+                favoriteUseCase: MockFavoriteUseCase(favorites: []),
                 photoUseCase: MockPhotoUseCase(
                     delay: 10,
                     photos: .fixtures
@@ -142,6 +188,7 @@ struct PhotoRowView: View {
         viewModel: .init(
             state: .init(),
             useCases: DIContainer.mock(
+                favoriteUseCase: MockFavoriteUseCase(favorites: []),
                 photoUseCase: MockPhotoUseCase(
                     throwError: true
                 )
@@ -155,6 +202,7 @@ struct PhotoRowView: View {
         viewModel: .init(
             state: .init(),
             useCases: DIContainer.mock(
+                favoriteUseCase: MockFavoriteUseCase(favorites: []),
                 photoUseCase: MockPhotoUseCase(
                     photos: []
                 )

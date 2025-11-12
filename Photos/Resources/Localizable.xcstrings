@@ -15,6 +15,9 @@
         }
       }
     },
+    "Error" : {
+
+    },
     "Error Loading Favorites" : {
 
     },
@@ -37,6 +40,9 @@
 
     },
     "No Photos Yet" : {
+
+    },
+    "OK" : {
 
     },
     "PhotoDetail.AspectRatio.label" : {
@@ -123,6 +129,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Photo ID"
+          }
+        }
+      }
+    },
+    "PhotoList.FavoriteButton.accessibilityLabel" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Favorite"
+          }
+        }
+      }
+    },
+    "PhotoList.UnfavoriteButton.accessibilityLabel" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unfavorite"
           }
         }
       }
