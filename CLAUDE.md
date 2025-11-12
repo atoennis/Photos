@@ -191,6 +191,11 @@ Use the swift6-code-reviewer agent to review my PhotoListViewModel implementatio
 5. **Don't add Sendable to protocols** unless there's a specific need (structs infer it automatically)
 6. **ViewModels must be @MainActor** - this is already done, don't remove it
 7. **Tests should not mutate ViewModels** after initialization
+8. **Make small, atomic commits** - each commit should:
+   - Compile successfully without errors or warnings
+   - Include test coverage for any new or modified functionality
+   - Represent a single logical change or unit of work
+   - Be independently reviewable and revertable
 
 ### Common Patterns
 - **ViewModel pattern:**
