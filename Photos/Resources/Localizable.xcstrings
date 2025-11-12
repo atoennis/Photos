@@ -15,6 +15,30 @@
         }
       }
     },
+    "Error Loading Favorites" : {
+
+    },
+    "Error Loading Photos" : {
+
+    },
+    "Favorite photos will appear here" : {
+
+    },
+    "Favorites" : {
+
+    },
+    "Hello, world!" : {
+
+    },
+    "ID: %@" : {
+
+    },
+    "No Favorites Yet" : {
+
+    },
+    "No Photos Yet" : {
+
+    },
     "PhotoDetail.AspectRatio.label" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -103,49 +127,10 @@
         }
       }
     },
-    "Could not load photo details" : {
-
-    },
-    "Error Loading Favorites" : {
-
-    },
-    "Error Loading Photos" : {
-
-    },
-    "Failed to Load" : {
-
-    },
-    "Favorite photos will appear here" : {
-
-    },
-    "Favorites" : {
-
-    },
-    "Hello, world!" : {
-
-    },
-    "ID: %@" : {
-
-    },
-    "Loading photo details..." : {
-
-    },
-    "No Favorites Yet" : {
-
-    },
-    "No Photos Yet" : {
-
-    },
-    "Photo Details" : {
-
-    },
     "Photos" : {
 
     },
     "Pull to refresh to load photos" : {
-
-    },
-    "Retry" : {
 
     },
     "Unable to load favorites. Please try again." : {
