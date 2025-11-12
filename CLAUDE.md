@@ -49,6 +49,7 @@ Data Layer (Infrastructure)
 #### Function and Initializer Parameters
 - **Multi-line formatting:** Always use multi-line formatting when there are 2 or more parameters
 - **Alphabetical ordering:** All parameters must be in alphabetical order
+  - **Exception:** Trailing closures should remain at the end and are exempt from alphabetical ordering
 - **Format example:**
   ```swift
   func fetchPhotos(
@@ -62,6 +63,15 @@ Data Layer (Infrastructure)
   ) {
       self.repository = repository
       self.useCase = useCase
+  }
+
+  // Trailing closure exception
+  func performTask(
+      delay: TimeInterval,
+      priority: TaskPriority,
+      operation: () async -> Void
+  ) async {
+      // operation closure remains at end despite alphabetically being first
   }
   ```
 
