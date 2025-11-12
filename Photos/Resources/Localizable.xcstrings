@@ -45,6 +45,17 @@
     "OK" : {
 
     },
+    "PhotoDetail.AspectRatio.format" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%.2f:1"
+          }
+        }
+      }
+    },
     "PhotoDetail.AspectRatio.label" : {
       "extractionState" : "manual",
       "localizations" : {

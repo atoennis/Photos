@@ -16,19 +16,22 @@ struct PhotoDetailPanel: View {
             // Metadata content
             VStack(alignment: .leading, spacing: 12) {
                 DetailRow(
-                    label: String(localized: .photoDetailAuthorLabel),
+                    label: .photoDetailAuthorLabel,
                     value: photo.author
                 )
                 DetailRow(
-                    label: String(localized: .photoDetailDimensionsLabel),
+                    label: .photoDetailDimensionsLabel,
                     value: photo.displayInfo
                 )
                 DetailRow(
-                    label: String(localized: .photoDetailAspectRatioLabel),
-                    value: String(format: "%.2f:1", photo.aspectRatio)
+                    label: .photoDetailAspectRatioLabel,
+                    value: String(
+                        format: String(localized: .photoDetailAspectRatioFormat),
+                        photo.aspectRatio
+                    )
                 )
                 DetailRow(
-                    label: String(localized: .photoDetailPhotoIDLabel),
+                    label: .photoDetailPhotoIDLabel,
                     value: photo.id
                 )
             }
@@ -56,7 +59,7 @@ struct PhotoDetailPanel: View {
 
 /// A row displaying a label-value pair
 private struct DetailRow: View {
-    let label: String
+    let label: LocalizedStringResource
     let value: String
 
     var body: some View {

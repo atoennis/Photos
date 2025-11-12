@@ -42,20 +42,20 @@ struct PhotoDetailView: View {
 
     private func photoDetailView(photo: Photo) -> some View {
         PhotoDetailContent(
-            photo: photo,
             isFavorite: viewModel.state.isFavorite,
             onToggleFavorite: {
                 Task { await viewModel.send(.toggleFavorite) }
-            }
+            },
+            photo: photo
         )
     }
 }
 
 /// The main content view for photo detail with swipe-up panel interaction
 private struct PhotoDetailContent: View {
-    let photo: Photo
     let isFavorite: Bool
     let onToggleFavorite: () -> Void
+    let photo: Photo
 
     @State private var isDetailPanelExpanded: Bool = false
     @State private var dragOffset: CGFloat = 0
@@ -90,10 +90,7 @@ private struct PhotoDetailContent: View {
     }
 
     private var photoLayer: some View {
-        ZoomableImageView(
-            isEnabled: !isDetailPanelExpanded,
-            onScaleChange: { _ in }
-        ) {
+        ZoomableImageView(isEnabled: !isDetailPanelExpanded) {
             LazyImage(url: URL(string: photo.downloadUrl)) { state in
                 if let image = state.image {
                     image
@@ -121,7 +118,7 @@ private struct PhotoDetailContent: View {
         .gesture(
             DragGesture()
                 .onChanged { value in
-                    // Only respond to swipe up when not panel is not expanded and zoom is at 1.0
+                    // Only respond to swipe up when panel is not expanded
                     guard !isDetailPanelExpanded else { return }
 
                     let translation = value.translation.height
