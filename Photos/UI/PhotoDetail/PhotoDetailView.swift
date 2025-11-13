@@ -90,39 +90,52 @@ private struct PhotoDetailContent: View {
     }
 
     private func photoLayer(geometry: GeometryProxy) -> some View {
-        let photoOffset: CGFloat = isDetailPanelExpanded ? -(panelHeight / 2) : 0
+        // Calculate photo offset based on state and live drag feedback
+        let photoOffset: CGFloat = {
+            if isDetailPanelExpanded {
+                // Expanded: photo is at top position, moves with drag
+                return -(panelHeight / 2) + (dragOffset / 2)
+            } else {
+                // Collapsed: photo is centered, moves up as we drag up
+                return dragOffset / 2
+            }
+        }()
 
-        return ZoomableImageView(isEnabled: !isDetailPanelExpanded) {
-            LazyImage(url: URL(string: photo.downloadUrl)) { state in
-                if let image = state.image {
-                    image
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                } else if state.error != nil {
-                    Rectangle()
-                        .fill(Color.gray.opacity(0.2))
-                        .aspectRatio(photo.aspectRatio, contentMode: .fit)
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                        .overlay {
-                            Image(systemName: "photo")
-                                .foregroundStyle(.secondary)
-                                .font(.largeTitle)
-                        }
-                } else {
-                    Rectangle()
-                        .fill(Color.gray.opacity(0.2))
-                        .aspectRatio(photo.aspectRatio, contentMode: .fit)
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                        .overlay {
-                            ProgressView()
-                        }
+        return ZStack {
+            Color.clear
+                .contentShape(Rectangle())
+
+            ZoomableImageView(isEnabled: !isDetailPanelExpanded) {
+                LazyImage(url: URL(string: photo.downloadUrl)) { state in
+                    if let image = state.image {
+                        image
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    } else if state.error != nil {
+                        Rectangle()
+                            .fill(Color.gray.opacity(0.2))
+                            .aspectRatio(photo.aspectRatio, contentMode: .fit)
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                            .overlay {
+                                Image(systemName: "photo")
+                                    .foregroundStyle(.secondary)
+                                    .font(.largeTitle)
+                            }
+                    } else {
+                        Rectangle()
+                            .fill(Color.gray.opacity(0.2))
+                            .aspectRatio(photo.aspectRatio, contentMode: .fit)
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                            .overlay {
+                                ProgressView()
+                            }
+                    }
                 }
             }
+            .offset(y: photoOffset)
+            .allowsHitTesting(!isDetailPanelExpanded)
         }
-        .offset(y: photoOffset)
-        .animation(.spring(response: 0.4, dampingFraction: 0.8), value: isDetailPanelExpanded)
-        .contentShape(Rectangle())
         .gesture(
             DragGesture()
                 .onChanged { value in
