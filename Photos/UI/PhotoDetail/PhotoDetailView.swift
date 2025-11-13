@@ -59,6 +59,7 @@ private struct PhotoDetailContent: View {
 
     @State private var isDetailPanelExpanded: Bool = false
     @State private var dragOffset: CGFloat = 0
+    @State private var navigationOpacity: CGFloat = 1.0
 
     private let panelHeight: CGFloat = 220
     private let dragThreshold: CGFloat = 50
@@ -74,6 +75,11 @@ private struct PhotoDetailContent: View {
             let upwardDrag = min(0, dragOffset)
             return min(1.0, abs(upwardDrag) / panelHeight)
         }
+    }
+
+    /// Check if user has started dragging from initial state
+    private var hasDraggedFromInitial: Bool {
+        dragProgress > 0
     }
 
     var body: some View {
@@ -97,16 +103,20 @@ private struct PhotoDetailContent: View {
                     Image(systemName: isFavorite ? "heart.fill" : "heart")
                         .foregroundStyle(isFavorite ? .red : .primary)
                 }
-                .opacity(1.0 - dragProgress)
-                .animation(.interactiveSpring(response: 0.35, dampingFraction: 0.86), value: dragProgress)
+                .opacity(navigationOpacity)
             }
         }
         .toolbarColorScheme(.dark, for: .navigationBar)
         .toolbarBackground(.visible, for: .navigationBar)
         .toolbarBackground(
-            Color.black.opacity((1.0 - dragProgress) * 0.5),
+            Color.black.opacity(navigationOpacity * 0.5),
             for: .navigationBar
         )
+        .onChange(of: hasDraggedFromInitial) { _, hasDragged in
+            withAnimation(.easeInOut(duration: 0.25)) {
+                navigationOpacity = hasDragged ? 0.0 : 1.0
+            }
+        }
     }
 
     private func photoLayer(geometry: GeometryProxy) -> some View {
@@ -200,8 +210,10 @@ private struct PhotoDetailContent: View {
         VStack {
             Spacer()
             PhotoDetailPanel(photo: photo)
+                .opacity(dragProgress)
                 .offset(y: panelOffset(geometry: geometry))
                 .gesture(panelDragGesture(geometry: geometry))
+                .animation(.interactiveSpring(response: 0.35, dampingFraction: 0.86), value: dragProgress)
                 .animation(.spring(response: 0.4, dampingFraction: 0.8), value: isDetailPanelExpanded)
                 .animation(.spring(response: 0.4, dampingFraction: 0.8), value: dragOffset)
         }
@@ -210,12 +222,16 @@ private struct PhotoDetailContent: View {
     private func panelOffset(geometry: GeometryProxy) -> CGFloat {
         let hiddenOffset = panelHeight + geometry.safeAreaInsets.bottom
 
+        // Calculate how much the image has moved up
+        let imageYOffset = -(geometry.size.height / 4) * dragProgress
+
         if isDetailPanelExpanded {
-            // Panel is expanded - show it with any active drag offset
+            // Panel is expanded - show it at bottom, adjusted for drag
             return dragOffset
         } else {
-            // Panel is collapsed - hide it below screen, adjusted by drag
-            return hiddenOffset + dragOffset
+            // Panel is collapsed - starts hidden, moves up with image
+            // Interpolate from hidden position to visible position
+            return hiddenOffset - (hiddenOffset * dragProgress) + dragOffset
         }
     }
 
