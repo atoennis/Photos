@@ -63,6 +63,19 @@ private struct PhotoDetailContent: View {
     private let panelHeight: CGFloat = 220
     private let dragThreshold: CGFloat = 50
 
+    /// Calculate drag progress (0.0 = collapsed, 1.0 = expanded)
+    private var dragProgress: CGFloat {
+        if isDetailPanelExpanded {
+            // Expanded state - calculate based on drag down
+            let downwardDrag = max(0, dragOffset)
+            return max(0, 1.0 - (downwardDrag / panelHeight))
+        } else {
+            // Collapsed state - calculate based on drag up
+            let upwardDrag = min(0, dragOffset)
+            return min(1.0, abs(upwardDrag) / panelHeight)
+        }
+    }
+
     var body: some View {
         GeometryReader { geometry in
             ZStack {
@@ -76,7 +89,6 @@ private struct PhotoDetailContent: View {
         }
         .navigationTitle(.photoDetailNavigationTitle)
         .navigationBarTitleDisplayMode(.inline)
-        .toolbar(isDetailPanelExpanded ? .hidden : .visible, for: .navigationBar)
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
                 Button {
@@ -85,25 +97,19 @@ private struct PhotoDetailContent: View {
                     Image(systemName: isFavorite ? "heart.fill" : "heart")
                         .foregroundStyle(isFavorite ? .red : .primary)
                 }
+                .opacity(1.0 - dragProgress)
+                .animation(.interactiveSpring(response: 0.35, dampingFraction: 0.86), value: dragProgress)
             }
         }
+        .toolbarColorScheme(.dark, for: .navigationBar)
+        .toolbarBackground(.visible, for: .navigationBar)
+        .toolbarBackground(
+            Color.black.opacity((1.0 - dragProgress) * 0.5),
+            for: .navigationBar
+        )
     }
 
     private func photoLayer(geometry: GeometryProxy) -> some View {
-        // Calculate drag progress (0.0 = collapsed, 1.0 = expanded)
-        let dragProgress: CGFloat = {
-            if isDetailPanelExpanded {
-                // Expanded state - calculate based on drag down
-                let downwardDrag = max(0, dragOffset)
-                return max(0, 1.0 - (downwardDrag / panelHeight))
-            } else {
-                // Collapsed state - calculate based on drag up
-                // Use panelHeight for transition distance to match expanded behavior
-                let upwardDrag = min(0, dragOffset)
-                return min(1.0, abs(upwardDrag) / panelHeight)
-            }
-        }()
-
         // Interpolate scale: 1.0 when collapsed, 2.0 when expanded (zoomed in)
         let imageScale = 1.0 + (dragProgress * 1.0)
 
