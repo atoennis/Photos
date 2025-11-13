@@ -97,8 +97,8 @@ private struct PhotoDetailContent: View {
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarBackButtonHidden(navigationOpacity < 1.0)
         .toolbar {
-            ToolbarItem(placement: .primaryAction) {
-                HStack {
+            if navigationOpacity > 0 {
+                ToolbarItem(placement: .primaryAction) {
                     Button {
                         onToggleFavorite()
                     } label: {
@@ -106,7 +106,6 @@ private struct PhotoDetailContent: View {
                             .foregroundStyle(isFavorite ? .red : .primary)
                     }
                 }
-                .opacity(navigationOpacity)
             }
         }
         .toolbarColorScheme(.dark, for: .navigationBar)
@@ -216,8 +215,15 @@ private struct PhotoDetailContent: View {
             return targetOffset * dragProgress + (dragOffset / 2)
         }()
 
-        // Panel sits below the image (screen center + image offset + spacing below image)
-        let panelYPosition = (geometry.size.height / 2) + imageYOffset + 250
+        // Calculate image scale (same as in photoLayer)
+        let imageScale = 1.0 + (dragProgress * 1.0)
+
+        // Estimate image height (assuming typical aspect ratio, image fits within screen width)
+        // Conservative estimate: image takes up about 1/3 of screen height when unscaled
+        let estimatedImageHeight = geometry.size.height / 3
+
+        // Panel sits at: image center + yOffset + (half of scaled image height) + spacing
+        let panelYPosition = (geometry.size.height / 2) + imageYOffset + (estimatedImageHeight * imageScale / 2) + 16
 
         return VStack(spacing: 0) {
             PhotoDetailPanel(photo: photo)
@@ -227,6 +233,7 @@ private struct PhotoDetailContent: View {
         }
         .frame(maxWidth: .infinity)
         .position(x: geometry.size.width / 2, y: panelYPosition)
+        .animation(.interactiveSpring(response: 0.35, dampingFraction: 0.86), value: panelYPosition)
     }
 
     private func panelDragGesture(geometry: GeometryProxy) -> some Gesture {
