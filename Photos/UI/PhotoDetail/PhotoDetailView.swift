@@ -67,7 +67,7 @@ private struct PhotoDetailContent: View {
         GeometryReader { geometry in
             ZStack {
                 // Layer 1: Full-screen photo with zoom
-                photoLayer
+                photoLayer(geometry: geometry)
                     .ignoresSafeArea()
 
                 // Layer 2: Detail panel overlay
@@ -89,8 +89,10 @@ private struct PhotoDetailContent: View {
         }
     }
 
-    private var photoLayer: some View {
-        ZoomableImageView(isEnabled: !isDetailPanelExpanded) {
+    private func photoLayer(geometry: GeometryProxy) -> some View {
+        let photoOffset: CGFloat = isDetailPanelExpanded ? -(panelHeight / 2) : 0
+
+        return ZoomableImageView(isEnabled: !isDetailPanelExpanded) {
             LazyImage(url: URL(string: photo.downloadUrl)) { state in
                 if let image = state.image {
                     image
@@ -118,6 +120,8 @@ private struct PhotoDetailContent: View {
                 }
             }
         }
+        .offset(y: photoOffset)
+        .animation(.spring(response: 0.4, dampingFraction: 0.8), value: isDetailPanelExpanded)
         .contentShape(Rectangle())
         .gesture(
             DragGesture()
