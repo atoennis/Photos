@@ -96,10 +96,12 @@ private struct PhotoDetailContent: View {
                     image
                         .resizable()
                         .aspectRatio(contentMode: .fit)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
                 } else if state.error != nil {
                     Rectangle()
                         .fill(Color.gray.opacity(0.2))
                         .aspectRatio(photo.aspectRatio, contentMode: .fit)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
                         .overlay {
                             Image(systemName: "photo")
                                 .foregroundStyle(.secondary)
@@ -109,12 +111,14 @@ private struct PhotoDetailContent: View {
                     Rectangle()
                         .fill(Color.gray.opacity(0.2))
                         .aspectRatio(photo.aspectRatio, contentMode: .fit)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
                         .overlay {
                             ProgressView()
                         }
                 }
             }
         }
+        .contentShape(Rectangle())
         .gesture(
             DragGesture()
                 .onChanged { value in
