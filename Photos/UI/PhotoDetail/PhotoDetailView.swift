@@ -98,11 +98,13 @@ private struct PhotoDetailContent: View {
         .navigationBarBackButtonHidden(navigationOpacity < 1.0)
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
-                Button {
-                    onToggleFavorite()
-                } label: {
-                    Image(systemName: isFavorite ? "heart.fill" : "heart")
-                        .foregroundStyle(isFavorite ? .red : .primary)
+                HStack {
+                    Button {
+                        onToggleFavorite()
+                    } label: {
+                        Image(systemName: isFavorite ? "heart.fill" : "heart")
+                            .foregroundStyle(isFavorite ? .red : .primary)
+                    }
                 }
                 .opacity(navigationOpacity)
             }
@@ -208,8 +210,14 @@ private struct PhotoDetailContent: View {
     }
 
     private func detailPanelLayer(geometry: GeometryProxy) -> some View {
-        // Panel sits at vertical center + offset to be below image
-        let panelYPosition = (geometry.size.height / 2) + 16
+        // Calculate image's yOffset (same as in photoLayer)
+        let imageYOffset: CGFloat = {
+            let targetOffset = -(geometry.size.height / 4)
+            return targetOffset * dragProgress + (dragOffset / 2)
+        }()
+
+        // Panel sits below the image (screen center + image offset + spacing below image)
+        let panelYPosition = (geometry.size.height / 2) + imageYOffset + 250
 
         return VStack(spacing: 0) {
             PhotoDetailPanel(photo: photo)
