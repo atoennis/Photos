@@ -76,7 +76,7 @@ private struct PhotoDetailContent: View {
         }
         .navigationTitle(.photoDetailNavigationTitle)
         .navigationBarTitleDisplayMode(.inline)
-        .toolbar(isDetailPanelExpanded ? .visible : .hidden, for: .navigationBar)
+        .toolbar(isDetailPanelExpanded ? .hidden : .visible, for: .navigationBar)
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
                 Button {
@@ -90,16 +90,19 @@ private struct PhotoDetailContent: View {
     }
 
     private func photoLayer(geometry: GeometryProxy) -> some View {
-        // Calculate photo offset based on state and live drag feedback
-        let photoOffset: CGFloat = {
-            if isDetailPanelExpanded {
-                // Expanded: photo is at top position, moves with drag
-                return -(panelHeight / 2) + (dragOffset / 2)
-            } else {
-                // Collapsed: photo is centered, moves up as we drag up
-                return dragOffset / 2
-            }
-        }()
+        // Calculate available height and offset for photo
+        let availableHeight: CGFloat
+        let yOffset: CGFloat
+
+        if isDetailPanelExpanded {
+            // Expanded: photo fills top half of screen
+            availableHeight = geometry.size.height / 2
+            yOffset = -(geometry.size.height / 4) + (dragOffset / 2)
+        } else {
+            // Collapsed: photo has full screen height
+            availableHeight = geometry.size.height
+            yOffset = dragOffset / 2
+        }
 
         return ZStack {
             Color.clear
@@ -111,12 +114,12 @@ private struct PhotoDetailContent: View {
                         image
                             .resizable()
                             .aspectRatio(contentMode: .fit)
-                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                            .frame(maxWidth: .infinity, maxHeight: availableHeight)
                     } else if state.error != nil {
                         Rectangle()
                             .fill(Color.gray.opacity(0.2))
                             .aspectRatio(photo.aspectRatio, contentMode: .fit)
-                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                            .frame(maxWidth: .infinity, maxHeight: availableHeight)
                             .overlay {
                                 Image(systemName: "photo")
                                     .foregroundStyle(.secondary)
@@ -126,17 +129,18 @@ private struct PhotoDetailContent: View {
                         Rectangle()
                             .fill(Color.gray.opacity(0.2))
                             .aspectRatio(photo.aspectRatio, contentMode: .fit)
-                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                            .frame(maxWidth: .infinity, maxHeight: availableHeight)
                             .overlay {
                                 ProgressView()
                             }
                     }
                 }
             }
-            .offset(y: photoOffset)
+            .frame(maxWidth: .infinity, maxHeight: availableHeight)
+            .offset(y: yOffset)
             .allowsHitTesting(!isDetailPanelExpanded)
         }
-        .gesture(
+        .highPriorityGesture(
             DragGesture()
                 .onChanged { value in
                     // Only respond to swipe up when panel is not expanded
