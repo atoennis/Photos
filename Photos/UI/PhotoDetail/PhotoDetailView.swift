@@ -146,6 +146,8 @@ private struct PhotoDetailContent: View {
             }
             .scaleEffect(imageScale)
             .offset(y: yOffset)
+            .animation(.interactiveSpring(response: 0.35, dampingFraction: 0.86), value: imageScale)
+            .animation(.interactiveSpring(response: 0.35, dampingFraction: 0.86), value: yOffset)
             .allowsHitTesting(!isDetailPanelExpanded)
         }
         .highPriorityGesture(
