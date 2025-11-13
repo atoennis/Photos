@@ -26,8 +26,9 @@ struct PhotoDetailPanel: View {
                 DetailRow(
                     label: .photoDetailAspectRatioLabel,
                     value: String(
-                        format: String(localized: .photoDetailAspectRatioFormat),
-                        photo.aspectRatio
+                        localized: .init("PhotoDetail.AspectRatio.format",
+                                       defaultValue: "%.2f:1"),
+                        arguments: [photo.aspectRatio]
                     )
                 )
                 DetailRow(
