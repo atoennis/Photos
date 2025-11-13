@@ -97,9 +97,10 @@ private struct PhotoDetailContent: View {
                 let downwardDrag = max(0, dragOffset)
                 return max(0, 1.0 - (downwardDrag / panelHeight))
             } else {
-                // Collapsing state - calculate based on drag up
+                // Collapsed state - calculate based on drag up
+                // Use panelHeight for transition distance to match expanded behavior
                 let upwardDrag = min(0, dragOffset)
-                return min(1.0, abs(upwardDrag) / dragThreshold)
+                return min(1.0, abs(upwardDrag) / panelHeight)
             }
         }()
 
