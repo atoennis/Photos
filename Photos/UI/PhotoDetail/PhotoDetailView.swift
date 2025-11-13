@@ -93,8 +93,9 @@ private struct PhotoDetailContent: View {
                 detailPanelLayer(geometry: geometry)
             }
         }
-        .navigationTitle(.photoDetailNavigationTitle)
+        .navigationTitle(navigationOpacity > 0 ? .photoDetailNavigationTitle : "")
         .navigationBarTitleDisplayMode(.inline)
+        .navigationBarBackButtonHidden(navigationOpacity < 1.0)
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
                 Button {
@@ -207,32 +208,17 @@ private struct PhotoDetailContent: View {
     }
 
     private func detailPanelLayer(geometry: GeometryProxy) -> some View {
-        VStack {
-            Spacer()
+        // Panel sits at vertical center + offset to be below image
+        let panelYPosition = (geometry.size.height / 2) + 16
+
+        return VStack(spacing: 0) {
             PhotoDetailPanel(photo: photo)
                 .opacity(dragProgress)
-                .offset(y: panelOffset(geometry: geometry))
                 .gesture(panelDragGesture(geometry: geometry))
                 .animation(.interactiveSpring(response: 0.35, dampingFraction: 0.86), value: dragProgress)
-                .animation(.spring(response: 0.4, dampingFraction: 0.8), value: isDetailPanelExpanded)
-                .animation(.spring(response: 0.4, dampingFraction: 0.8), value: dragOffset)
         }
-    }
-
-    private func panelOffset(geometry: GeometryProxy) -> CGFloat {
-        let hiddenOffset = panelHeight + geometry.safeAreaInsets.bottom
-
-        // Calculate how much the image has moved up
-        let imageYOffset = -(geometry.size.height / 4) * dragProgress
-
-        if isDetailPanelExpanded {
-            // Panel is expanded - show it at bottom, adjusted for drag
-            return dragOffset
-        } else {
-            // Panel is collapsed - starts hidden, moves up with image
-            // Interpolate from hidden position to visible position
-            return hiddenOffset - (hiddenOffset * dragProgress) + dragOffset
-        }
+        .frame(maxWidth: .infinity)
+        .position(x: geometry.size.width / 2, y: panelYPosition)
     }
 
     private func panelDragGesture(geometry: GeometryProxy) -> some Gesture {
@@ -241,10 +227,11 @@ private struct PhotoDetailContent: View {
                 let translation = value.translation.height
 
                 if isDetailPanelExpanded {
-                    // Dragging down to collapse - only allow downward movement
-                    dragOffset = max(0, translation)
+                    // Dragging down to collapse - track the drag
+                    if translation > 0 {
+                        dragOffset = translation
+                    }
                 }
-                // Note: Upward drags when collapsed are handled by photoLayer gesture
             }
             .onEnded { value in
                 let translation = value.translation.height
