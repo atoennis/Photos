@@ -90,19 +90,27 @@ private struct PhotoDetailContent: View {
     }
 
     private func photoLayer(geometry: GeometryProxy) -> some View {
-        // Calculate available height and offset for photo
-        let availableHeight: CGFloat
-        let yOffset: CGFloat
+        // Calculate drag progress (0.0 = collapsed, 1.0 = expanded)
+        let dragProgress: CGFloat = {
+            if isDetailPanelExpanded {
+                // Expanded state - calculate based on drag down
+                let downwardDrag = max(0, dragOffset)
+                return max(0, 1.0 - (downwardDrag / panelHeight))
+            } else {
+                // Collapsing state - calculate based on drag up
+                let upwardDrag = min(0, dragOffset)
+                return min(1.0, abs(upwardDrag) / dragThreshold)
+            }
+        }()
 
-        if isDetailPanelExpanded {
-            // Expanded: photo fills top half of screen
-            availableHeight = geometry.size.height / 2
-            yOffset = -(geometry.size.height / 4) + (dragOffset / 2)
-        } else {
-            // Collapsed: photo has full screen height
-            availableHeight = geometry.size.height
-            yOffset = dragOffset / 2
-        }
+        // Interpolate scale: 1.0 when collapsed, 2.0 when expanded (zoomed in)
+        let imageScale = 1.0 + (dragProgress * 1.0)
+
+        // Calculate position offset
+        let yOffset: CGFloat = {
+            let targetOffset = -(geometry.size.height / 4)
+            return targetOffset * dragProgress + (dragOffset / 2)
+        }()
 
         return ZStack {
             Color.clear
@@ -114,12 +122,10 @@ private struct PhotoDetailContent: View {
                         image
                             .resizable()
                             .aspectRatio(contentMode: .fit)
-                            .frame(maxWidth: .infinity, maxHeight: availableHeight)
                     } else if state.error != nil {
                         Rectangle()
                             .fill(Color.gray.opacity(0.2))
                             .aspectRatio(photo.aspectRatio, contentMode: .fit)
-                            .frame(maxWidth: .infinity, maxHeight: availableHeight)
                             .overlay {
                                 Image(systemName: "photo")
                                     .foregroundStyle(.secondary)
@@ -129,37 +135,47 @@ private struct PhotoDetailContent: View {
                         Rectangle()
                             .fill(Color.gray.opacity(0.2))
                             .aspectRatio(photo.aspectRatio, contentMode: .fit)
-                            .frame(maxWidth: .infinity, maxHeight: availableHeight)
                             .overlay {
                                 ProgressView()
                             }
                     }
                 }
             }
-            .frame(maxWidth: .infinity, maxHeight: availableHeight)
+            .scaleEffect(imageScale)
             .offset(y: yOffset)
             .allowsHitTesting(!isDetailPanelExpanded)
         }
         .highPriorityGesture(
             DragGesture()
                 .onChanged { value in
-                    // Only respond to swipe up when panel is not expanded
-                    guard !isDetailPanelExpanded else { return }
-
                     let translation = value.translation.height
 
-                    // Only track upward drags
-                    if translation < 0 {
-                        dragOffset = translation
+                    if isDetailPanelExpanded {
+                        // Expanded: allow drag down to collapse
+                        if translation > 0 {
+                            dragOffset = translation
+                        }
+                    } else {
+                        // Collapsed: allow drag up to expand
+                        if translation < 0 {
+                            dragOffset = translation
+                        }
                     }
                 }
                 .onEnded { value in
                     let translation = value.translation.height
 
                     withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
-                        // Check if dragged up far enough to expand
-                        if !isDetailPanelExpanded && translation < -dragThreshold {
-                            isDetailPanelExpanded = true
+                        if isDetailPanelExpanded {
+                            // Check if dragged down far enough to collapse
+                            if translation > dragThreshold {
+                                isDetailPanelExpanded = false
+                            }
+                        } else {
+                            // Check if dragged up far enough to expand
+                            if translation < -dragThreshold {
+                                isDetailPanelExpanded = true
+                            }
                         }
 
                         dragOffset = 0
