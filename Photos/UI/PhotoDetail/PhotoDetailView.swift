@@ -218,12 +218,17 @@ private struct PhotoDetailContent: View {
         // Calculate image scale (same as in photoLayer)
         let imageScale = 1.0 + (dragProgress * 1.0)
 
-        // Estimate image height (assuming typical aspect ratio, image fits within screen width)
-        // Conservative estimate: image takes up about 1/3 of screen height when unscaled
-        let estimatedImageHeight = geometry.size.height / 3
+        // Calculate actual image dimensions based on aspect ratio and .fit behavior
+        let screenWidth = geometry.size.width
+        let screenHeight = geometry.size.height
+        let aspectRatio = photo.aspectRatio  // width / height
+
+        // Image uses .fit, so it's constrained by either width or height
+        let widthConstrainedHeight = screenWidth / aspectRatio
+        let actualImageHeight: CGFloat = min(widthConstrainedHeight, screenHeight)
 
         // Panel sits at: image center + yOffset + (half of scaled image height) + spacing
-        let panelYPosition = (geometry.size.height / 2) + imageYOffset + (estimatedImageHeight * imageScale / 2) + 16
+        let panelYPosition = (geometry.size.height / 2) + imageYOffset + (actualImageHeight * imageScale / 2) + 16
 
         return VStack(spacing: 0) {
             PhotoDetailPanel(photo: photo)
