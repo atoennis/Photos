@@ -227,8 +227,14 @@ private struct PhotoDetailContent: View {
         let widthConstrainedHeight = screenWidth / aspectRatio
         let actualImageHeight: CGFloat = min(widthConstrainedHeight, screenHeight)
 
-        // Panel sits at: image center + yOffset + (half of scaled image height) + spacing
-        let panelYPosition = (geometry.size.height / 2) + imageYOffset + (actualImageHeight * imageScale / 2) + 16
+        // Calculate the Y position of the image's bottom edge
+        let imageBottomY = (screenHeight / 2) + imageYOffset + (actualImageHeight * imageScale / 2)
+
+        // Panel's top edge should be 16px below the image bottom
+        let panelTopY = imageBottomY + 16
+
+        // .position() uses the center of the view, so add half the panel height
+        let panelYPosition = panelTopY + (panelHeight / 2)
 
         return VStack(spacing: 0) {
             PhotoDetailPanel(photo: photo)
